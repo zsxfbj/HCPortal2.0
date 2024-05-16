@@ -40,6 +40,8 @@
     <Compile Include="Converter\DefaultDateTimeConverter.cs" />
     <Compile Include="Converter\LongToStringConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShortIdWorker.cs" />
+    <Compile Include="Singleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

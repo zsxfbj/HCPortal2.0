@@ -36,7 +36,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HC\BActionLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utitily\HC.Utitily.csproj">
+      <Project>{19F64909-3C67-4C35-8D1C-A1AFF20A6DD8}</Project>
+      <Name>HC.Utitily</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
