@@ -1,9 +1,14 @@
 using System;
 using System.Windows.Forms;
+using HC.BLL;
+using HC.Model.VO;
 using MSXML2;
+using Newtonsoft.Json;
 using WebRegComLib;
 
 namespace HC.WinService;
+
+public delegate void ShowMessageEventHandler(String message);
 
 public class Form1 : Form
 {
@@ -19,6 +24,9 @@ public class Form1 : Form
     private Button btnGetPersonInfo;
     private Button btnStartService;
     private WebRegClass cd;
+    private Button button1;
+    private MainJobThread mainJobThread;
+
 
 	protected override void Dispose(bool disposing)
 	{
@@ -27,17 +35,18 @@ public class Form1 : Form
 
 	private void InitializeComponent()
 	{
-            this.panel1 = new Panel();
-            this.tbResult = new TextBox();
-            this.label1 = new Label();
-            this.btnPb6 = new Button();
-            this.tbxTradeNo = new TextBox();
-            this.btnCommitTradeState = new Button();
-            this.btnRefundment = new Button();
-            this.btnTrade = new Button();
-            this.btnDivide = new Button();
-            this.btnGetPersonInfo = new Button();
-            this.btnStartService = new Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tbResult = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnPb6 = new System.Windows.Forms.Button();
+            this.tbxTradeNo = new System.Windows.Forms.TextBox();
+            this.btnCommitTradeState = new System.Windows.Forms.Button();
+            this.btnRefundment = new System.Windows.Forms.Button();
+            this.btnTrade = new System.Windows.Forms.Button();
+            this.btnDivide = new System.Windows.Forms.Button();
+            this.btnGetPersonInfo = new System.Windows.Forms.Button();
+            this.btnStartService = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,7 +72,7 @@ public class Form1 : Form
             this.tbResult.Location = new System.Drawing.Point(174, 70);
             this.tbResult.Multiline = true;
             this.tbResult.Name = "tbResult";
-            this.tbResult.ScrollBars = ScrollBars.Vertical;
+            this.tbResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbResult.Size = new System.Drawing.Size(600, 370);
             this.tbResult.TabIndex = 17;
             // 
@@ -79,7 +88,7 @@ public class Form1 : Form
             // btnPb6
             // 
             this.btnPb6.Location = new System.Drawing.Point(18, 251);
-            this.btnPb6.Margin = new Padding(4);
+            this.btnPb6.Margin = new System.Windows.Forms.Padding(4);
             this.btnPb6.Name = "btnPb6";
             this.btnPb6.Size = new System.Drawing.Size(143, 29);
             this.btnPb6.TabIndex = 15;
@@ -89,7 +98,7 @@ public class Form1 : Form
             // tbxTradeNo
             // 
             this.tbxTradeNo.Location = new System.Drawing.Point(74, 27);
-            this.tbxTradeNo.Margin = new Padding(4);
+            this.tbxTradeNo.Margin = new System.Windows.Forms.Padding(4);
             this.tbxTradeNo.Name = "tbxTradeNo";
             this.tbxTradeNo.Size = new System.Drawing.Size(379, 25);
             this.tbxTradeNo.TabIndex = 14;
@@ -97,7 +106,7 @@ public class Form1 : Form
             // btnCommitTradeState
             // 
             this.btnCommitTradeState.Location = new System.Drawing.Point(18, 214);
-            this.btnCommitTradeState.Margin = new Padding(4);
+            this.btnCommitTradeState.Margin = new System.Windows.Forms.Padding(4);
             this.btnCommitTradeState.Name = "btnCommitTradeState";
             this.btnCommitTradeState.Size = new System.Drawing.Size(143, 29);
             this.btnCommitTradeState.TabIndex = 13;
@@ -107,7 +116,7 @@ public class Form1 : Form
             // btnRefundment
             // 
             this.btnRefundment.Location = new System.Drawing.Point(18, 178);
-            this.btnRefundment.Margin = new Padding(4);
+            this.btnRefundment.Margin = new System.Windows.Forms.Padding(4);
             this.btnRefundment.Name = "btnRefundment";
             this.btnRefundment.Size = new System.Drawing.Size(143, 29);
             this.btnRefundment.TabIndex = 12;
@@ -117,7 +126,7 @@ public class Form1 : Form
             // btnTrade
             // 
             this.btnTrade.Location = new System.Drawing.Point(18, 142);
-            this.btnTrade.Margin = new Padding(4);
+            this.btnTrade.Margin = new System.Windows.Forms.Padding(4);
             this.btnTrade.Name = "btnTrade";
             this.btnTrade.Size = new System.Drawing.Size(143, 29);
             this.btnTrade.TabIndex = 11;
@@ -127,7 +136,7 @@ public class Form1 : Form
             // btnDivide
             // 
             this.btnDivide.Location = new System.Drawing.Point(18, 106);
-            this.btnDivide.Margin = new Padding(4);
+            this.btnDivide.Margin = new System.Windows.Forms.Padding(4);
             this.btnDivide.Name = "btnDivide";
             this.btnDivide.Size = new System.Drawing.Size(143, 29);
             this.btnDivide.TabIndex = 10;
@@ -137,7 +146,7 @@ public class Form1 : Form
             // btnGetPersonInfo
             // 
             this.btnGetPersonInfo.Location = new System.Drawing.Point(18, 70);
-            this.btnGetPersonInfo.Margin = new Padding(4);
+            this.btnGetPersonInfo.Margin = new System.Windows.Forms.Padding(4);
             this.btnGetPersonInfo.Name = "btnGetPersonInfo";
             this.btnGetPersonInfo.Size = new System.Drawing.Size(143, 29);
             this.btnGetPersonInfo.TabIndex = 9;
@@ -152,7 +161,17 @@ public class Form1 : Form
             this.btnStartService.TabIndex = 10;
             this.btnStartService.Text = "启动服务";
             this.btnStartService.UseVisualStyleBackColor = true;
-            this.btnStartService.Click += new EventHandler(this.btnStartService_Click);
+            this.btnStartService.Click += new System.EventHandler(this.btnStartService_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(817, 106);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(125, 52);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "解析GetPersonXml";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
@@ -160,12 +179,13 @@ public class Form1 : Form
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(971, 475);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnStartService);
             this.Controls.Add(this.panel1);
-            this.Margin = new Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "医保互联医院COM调用端";
-            this.Load += new EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -175,9 +195,16 @@ public class Form1 : Form
 	public Form1()
 	{
 		InitializeComponent();
+        mainJobThread = new MainJobThread();
+        mainJobThread.OnShowMessage += AppendMessage;
 	}
 
-	private void Form1_Load(object sender, EventArgs e)
+    private void AppendMessage(String message)
+    {
+        tbResult.AppendText(message + Environment.NewLine);
+    }
+
+    private void Form1_Load(object sender, EventArgs e)
 	{
 		cd = new WebRegClass();
 	}
@@ -291,22 +318,33 @@ public class Form1 : Form
     {
         if(btnStartService.Text == "启动服务")
         {
+            btnStartService.Text = "停止服务";
+            tbResult.Text = "";
             btnPb6.Enabled = false;
             btnDivide.Enabled = false;
             btnGetPersonInfo.Enabled = false;
             btnTrade.Enabled = false;
             btnRefundment.Enabled = false;
             btnCommitTradeState.Enabled = false;
+            mainJobThread.Start();
         } 
         else
         {
+            btnStartService.Text = "启动服务";
             btnPb6.Enabled = true;
             btnDivide.Enabled = true;
             btnGetPersonInfo.Enabled = true;
             btnTrade.Enabled = true;
             btnRefundment.Enabled = true;
-            btnCommitTradeState.Enabled = true; 
+            btnCommitTradeState.Enabled = true;
+            mainJobThread.Stop();
         }
 
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        ComResultVO<PersonVO> comResult = BActionXml.GetInstance().GetPersonVO(tbResult.Text.Trim());
+        MessageBox.Show(JsonConvert.SerializeObject(comResult), "解析结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
     }
 }

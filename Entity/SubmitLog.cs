@@ -56,7 +56,7 @@ namespace HC.Entity
             ClientIp = "127.0.0.1";
             SubmitType = 1;
             SubmitContent = "";
-            ResultContnet = "";
+            ResultContent = "";
             Flag = 0;
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;

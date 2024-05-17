@@ -13,6 +13,16 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.17" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BLL\HC.BLL.csproj" />
+    <ProjectReference Include="..\Entity\HC.Entity.csproj" />
+    <ProjectReference Include="..\Model\HC.Model.csproj" />
+    <ProjectReference Include="..\SQLServerDAL\HC.SQLServerDAL.csproj" />
+    <ProjectReference Include="..\Utitily\HC.Utitily.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Interop.WebRegComLib">
       <HintPath>C:\Program Files (x86)\Capinfo\BJWebCom\1.10.0004\Interop.WebRegComLib.dll</HintPath>
     </Reference>

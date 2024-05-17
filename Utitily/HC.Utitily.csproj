@@ -39,11 +39,15 @@
     <Compile Include="Converter\DecimalConverter.cs" />
     <Compile Include="Converter\DefaultDateTimeConverter.cs" />
     <Compile Include="Converter\LongToStringConverter.cs" />
+    <Compile Include="LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShortIdWorker.cs" />
     <Compile Include="Singleton.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="log4net">
+      <Version>2.0.17</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>

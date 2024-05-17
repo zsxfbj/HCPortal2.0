@@ -36,14 +36,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BActionXml.cs" />
     <Compile Include="HC\BActionLog.cs" />
+    <Compile Include="HC\BSubmitLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Entity\HC.Entity.csproj">
+      <Project>{7856cfc3-17c4-44a8-84a0-6d24c4b30365}</Project>
+      <Name>HC.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\HC.Model.csproj">
+      <Project>{cca50f74-c2b5-4c0a-bac3-7ca8b890caa4}</Project>
+      <Name>HC.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLServerDAL\HC.SQLServerDAL.csproj">
+      <Project>{a1a1e5d7-5c90-42b9-aedf-0bd1c4ed1634}</Project>
+      <Name>HC.SQLServerDAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utitily\HC.Utitily.csproj">
       <Project>{19F64909-3C67-4C35-8D1C-A1AFF20A6DD8}</Project>
       <Name>HC.Utitily</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="log4net">
+      <Version>2.0.17</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

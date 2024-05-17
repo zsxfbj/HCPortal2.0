@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using HC.Utility.Converter;
 using Newtonsoft.Json;
 
 namespace HC.Model.VO

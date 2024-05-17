@@ -2562,7 +2562,7 @@ namespace HC.SQLServerDAL
         #region RunProc
 
         /// <summary>
-        /// ִ��һ��û�в����ģ�ֻ����Ӱ�������Ĵ洢���̡�(ע�⣬���ܽ���return value)
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2573,7 +2573,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ���������ģ�ֻ����Ӱ�������Ĵ洢���̡�(ע�⣬���ܽ���return value)
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2585,7 +2585,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ�����������ģ�����SqlDataReader�Ĵ洢���̡�
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2596,7 +2596,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ���������ģ�����SqlDataReader�Ĵ洢���̡�
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2608,7 +2608,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ�����������ģ�����DataSet�Ĵ洢���̡�
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2619,7 +2619,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ���������ģ�����DataSet�Ĵ洢���̡�
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2631,8 +2631,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ�����������ģ����ؽ������һ�е�һ�е����ݡ�Ϊobject�ͣ�ͨ������ǿ��ת���õ���
-        /// ���� System.Datetime dt = (System.Datetime)RunProc("GetDate");
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName">�洢��������</param>
@@ -2643,8 +2642,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ���������ģ����ؽ������һ�е�һ�е����ݡ�Ϊobject�ͣ�ͨ������ǿ��ת���õ���
-        /// ���� System.Datetime dt = (System.Datetime)RunProc("GetDate");
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2656,7 +2654,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ�����������ģ�����xmlReader������Ĵ洢���̡�
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
@@ -2667,7 +2665,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// ִ��һ���������ģ�����xmlReader������Ĵ洢���̡�
+        /// ִ 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procName"></param>
