@@ -9,12 +9,6 @@ namespace HC.Model.VO
     public class TradeVO
     {
         /// <summary>
-        /// 社保卡号
-        /// </summary>
-        [JsonProperty("cardNumber")]
-        public string CardNumber { get; set; }
-
-        /// <summary>
         /// 交易流水
         /// </summary>
         [JsonProperty("tradeNumber")]
