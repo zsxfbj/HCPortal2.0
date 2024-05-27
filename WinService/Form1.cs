@@ -15,7 +15,6 @@ public class Form1 : Form
     private Panel panel1;
     private TextBox tbResult;
     private Label label1;
-    private Button btnPb6;
     private TextBox tbxTradeNo;
     private Button btnCommitTradeState;
     private Button btnRefundment;
@@ -24,21 +23,14 @@ public class Form1 : Form
     private Button btnGetPersonInfo;
     private Button btnStartService;
     private WebRegClass cd;
-    private Button button1;
     private MainJobThread mainJobThread;
 
 
-	protected override void Dispose(bool disposing)
-	{
-		base.Dispose(disposing);
-	}
-
-	private void InitializeComponent()
-	{
+    private void InitializeComponent()
+    {
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbResult = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnPb6 = new System.Windows.Forms.Button();
             this.tbxTradeNo = new System.Windows.Forms.TextBox();
             this.btnCommitTradeState = new System.Windows.Forms.Button();
             this.btnRefundment = new System.Windows.Forms.Button();
@@ -46,7 +38,6 @@ public class Form1 : Form
             this.btnDivide = new System.Windows.Forms.Button();
             this.btnGetPersonInfo = new System.Windows.Forms.Button();
             this.btnStartService = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,7 +46,6 @@ public class Form1 : Form
             this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panel1.Controls.Add(this.tbResult);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.btnPb6);
             this.panel1.Controls.Add(this.tbxTradeNo);
             this.panel1.Controls.Add(this.btnCommitTradeState);
             this.panel1.Controls.Add(this.btnRefundment);
@@ -85,16 +75,6 @@ public class Form1 : Form
             this.label1.TabIndex = 16;
             this.label1.Text = "交易号";
             // 
-            // btnPb6
-            // 
-            this.btnPb6.Location = new System.Drawing.Point(18, 251);
-            this.btnPb6.Margin = new System.Windows.Forms.Padding(4);
-            this.btnPb6.Name = "btnPb6";
-            this.btnPb6.Size = new System.Drawing.Size(143, 29);
-            this.btnPb6.TabIndex = 15;
-            this.btnPb6.Text = "InitPBEnv";
-            this.btnPb6.UseVisualStyleBackColor = true;
-            // 
             // tbxTradeNo
             // 
             this.tbxTradeNo.Location = new System.Drawing.Point(74, 27);
@@ -112,6 +92,7 @@ public class Form1 : Form
             this.btnCommitTradeState.TabIndex = 13;
             this.btnCommitTradeState.Text = "CommitTradeState";
             this.btnCommitTradeState.UseVisualStyleBackColor = true;
+            this.btnCommitTradeState.Click += new System.EventHandler(this.btnCommitTradeState_Click);
             // 
             // btnRefundment
             // 
@@ -122,6 +103,7 @@ public class Form1 : Form
             this.btnRefundment.TabIndex = 12;
             this.btnRefundment.Text = "Refundment";
             this.btnRefundment.UseVisualStyleBackColor = true;
+            this.btnRefundment.Click += new System.EventHandler(this.btnRefundment_Click);
             // 
             // btnTrade
             // 
@@ -132,6 +114,7 @@ public class Form1 : Form
             this.btnTrade.TabIndex = 11;
             this.btnTrade.Text = "Trade";
             this.btnTrade.UseVisualStyleBackColor = true;
+            this.btnTrade.Click += new System.EventHandler(this.btnTrade_Click);
             // 
             // btnDivide
             // 
@@ -142,6 +125,7 @@ public class Form1 : Form
             this.btnDivide.TabIndex = 10;
             this.btnDivide.Text = "Divide";
             this.btnDivide.UseVisualStyleBackColor = true;
+            this.btnDivide.Click += new System.EventHandler(this.btnDivide_Click);
             // 
             // btnGetPersonInfo
             // 
@@ -152,26 +136,17 @@ public class Form1 : Form
             this.btnGetPersonInfo.TabIndex = 9;
             this.btnGetPersonInfo.Text = "GetPersonInfo";
             this.btnGetPersonInfo.UseVisualStyleBackColor = true;
+            this.btnGetPersonInfo.Click += new System.EventHandler(this.btnGetPersonInfo_Click);
             // 
             // btnStartService
             // 
-            this.btnStartService.Location = new System.Drawing.Point(834, 42);
+            this.btnStartService.Location = new System.Drawing.Point(841, 65);
             this.btnStartService.Name = "btnStartService";
-            this.btnStartService.Size = new System.Drawing.Size(108, 46);
+            this.btnStartService.Size = new System.Drawing.Size(108, 36);
             this.btnStartService.TabIndex = 10;
             this.btnStartService.Text = "启动服务";
             this.btnStartService.UseVisualStyleBackColor = true;
             this.btnStartService.Click += new System.EventHandler(this.btnStartService_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(817, 106);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(125, 52);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "解析GetPersonXml";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
@@ -179,7 +154,6 @@ public class Form1 : Form
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(971, 475);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnStartService);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -190,14 +164,14 @@ public class Form1 : Form
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
-	}
+    }
 
-	public Form1()
-	{
-		InitializeComponent();
+    public Form1()
+    {
+        InitializeComponent();
         mainJobThread = new MainJobThread();
         mainJobThread.OnShowMessage += AppendMessage;
-	}
+    }
 
     private void AppendMessage(String message)
     {
@@ -205,133 +179,117 @@ public class Form1 : Form
     }
 
     private void Form1_Load(object sender, EventArgs e)
-	{
-		cd = new WebRegClass();
-	}
+    {
+        cd = new WebRegClass();
+    }
 
-	private void btnGetPersonInfo_Click(object sender, EventArgs e)
-	{
-		try
-		{
-			DOMDocument60Class dOMDocument60Class = new DOMDocument60Class();
-			dOMDocument60Class.load("PersonInWeb.xml");
-			string xml = dOMDocument60Class.xml;
-			string outXml = "";
-			cd.GetPersonInfo_Web(xml, out outXml);
-            tbResult.Text = outXml;
-			MessageBox.Show(outXml, "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			throw;
-		}
-	}
-
-	private void btnDivide_Click(object sender, EventArgs e)
-	{
-		try
-		{
-			DOMDocument60Class dOMDocument60Class = new DOMDocument60Class();
-			dOMDocument60Class.load("DivideInWeb.xml");
-			string xml = dOMDocument60Class.xml;
-			string outXml = "";
-			cd.Divide_Web(xml, out outXml);
+    private void btnGetPersonInfo_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            DOMDocument60Class dOMDocument60Class = new DOMDocument60Class();
+            dOMDocument60Class.load("PersonInWeb.xml");
+            string xml = dOMDocument60Class.xml;
+            string outXml = "";
+            cd.GetPersonInfo_Web(xml, out outXml);
             tbResult.Text = outXml;
             MessageBox.Show(outXml, "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			throw;
-		}
-	}
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            throw;
+        }
+    }
 
-	private void btnTrade_Click(object sender, EventArgs e)
-	{
-		try
-		{
-			string outXml = "";
-			cd.Trade_Web(out outXml);
+    private void btnDivide_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            DOMDocument60Class dOMDocument60Class = new DOMDocument60Class();
+            dOMDocument60Class.load("DivideInWeb.xml");
+            string xml = dOMDocument60Class.xml;
+            string outXml = "";
+            cd.Divide_Web(xml, out outXml);
             tbResult.Text = outXml;
             MessageBox.Show(outXml, "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			throw;
-		}
-	}
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            throw;
+        }
+    }
 
-	private void btnRefundment_Click(object sender, EventArgs e)
-	{
-		try
-		{
-			DOMDocument60Class dOMDocument60Class = new DOMDocument60Class();
-			dOMDocument60Class.load("RefundmentInWeb.xml");
-			string xml = dOMDocument60Class.xml;
-			string outXml = "";
-			cd.Refundment_Web(xml, out outXml);
+    private void btnTrade_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string outXml = "";
+            cd.Trade_Web(out outXml);
             tbResult.Text = outXml;
             MessageBox.Show(outXml, "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			throw;
-		}
-	}
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            throw;
+        }
+    }
 
-	private void btnCommitTradeState_Click(object sender, EventArgs e)
-	{
-		try
-		{
-			string tradeNO = tbxTradeNo.Text;
-			string outXml = "";
-			cd.CommitTradeState_Web(tradeNO, out outXml);
+    private void btnRefundment_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            DOMDocument60Class dOMDocument60Class = new DOMDocument60Class();
+            dOMDocument60Class.load("RefundmentInWeb.xml");
+            string xml = dOMDocument60Class.xml;
+            string outXml = "";
+            cd.Refundment_Web(xml, out outXml);
             tbResult.Text = outXml;
             MessageBox.Show(outXml, "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			throw;
-		}
-	}
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            throw;
+        }
+    }
 
-	private void btnPb6_Click(object sender, EventArgs e)
-	{
-		try
-		{
-			cd.InitPB6Env();
-			MessageBox.Show("OK!", "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			throw;
-		}
-	}
+    private void btnCommitTradeState_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string tradeNO = tbxTradeNo.Text;
+            string outXml = "";
+            cd.CommitTradeState_Web(tradeNO, out outXml);
+            tbResult.Text = outXml;
+            MessageBox.Show(outXml, "返回结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            throw;
+        }
+    }
 
 
     private void btnStartService_Click(object sender, EventArgs e)
     {
-        if(btnStartService.Text == "启动服务")
+        if (btnStartService.Text == "启动服务")
         {
             btnStartService.Text = "停止服务";
-            tbResult.Text = "";
-            btnPb6.Enabled = false;
+            tbResult.Text = "";        
             btnDivide.Enabled = false;
             btnGetPersonInfo.Enabled = false;
             btnTrade.Enabled = false;
             btnRefundment.Enabled = false;
             btnCommitTradeState.Enabled = false;
             mainJobThread.Start();
-        } 
+        }
         else
         {
-            btnStartService.Text = "启动服务";
-            btnPb6.Enabled = true;
+            btnStartService.Text = "启动服务";         
             btnDivide.Enabled = true;
             btnGetPersonInfo.Enabled = true;
             btnTrade.Enabled = true;
@@ -340,11 +298,5 @@ public class Form1 : Form
             mainJobThread.Stop();
         }
 
-    }
-
-    private void button1_Click(object sender, EventArgs e)
-    {
-        ComResultVO<PersonVO> comResult = BActionXml.GetInstance().GetPersonVO(tbResult.Text.Trim());
-        MessageBox.Show(JsonConvert.SerializeObject(comResult), "解析结果", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
     }
 }

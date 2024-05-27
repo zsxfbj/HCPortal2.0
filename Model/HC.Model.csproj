@@ -40,8 +40,10 @@
     <Compile Include="DTO\FeeItemDTO.cs" />
     <Compile Include="DTO\GetPersonInfoReqDTO.cs" />
     <Compile Include="DTO\RecipeDTO.cs" />
+    <Compile Include="DTO\RefundmentReqDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VO\ComResultVO.cs" />
+    <Compile Include="VO\DivideTradeResultVO.cs" />
     <Compile Include="VO\FeeItemVO.cs" />
     <Compile Include="VO\MedicineCatalog2VO.cs" />
     <Compile Include="VO\MedicineCatalogVO.cs" />

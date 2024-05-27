@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Threading;
+using HC.BLL;
 using HC.BLL.HC;
 using HC.Entity;
+using HC.Model.DTO;
+using HC.Model.VO;
 using HC.Utitily;
+using Newtonsoft.Json;
 using WebRegComLib;
 
 namespace HC.WinService
@@ -92,11 +96,63 @@ namespace HC.WinService
                 SubmitLog submitLog = BSubmitLog.GetInstance().GetSubmitLogByFlag(0);
                 if(submitLog != null)
                 {
+                    DivideTradeResultVO divideTradeResult = new DivideTradeResultVO();
+                    
                     //开始拆分任务
                     WebRegClass cd = new WebRegClass();
+                    if(submitLog.SubmitType == 1)
+                    {
+                        DivideReqDTO req = JsonConvert.DeserializeObject<DivideReqDTO>(submitLog.SubmitContent);
+
+                        ActionLog step1 = new ActionLog
+                        {
+                            SubmitId = submitLog.Id,
+                            Step = 1,
+                            ActionName = "GetPerson",
+                            RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
+                        };
+
+                        cd.GetPersonInfo_Web(step1.RequestData, out string outXml);
+
+                        step1.ResponseData = outXml;
+                        BActionLog.GetInstance().Insert(step1);
 
 
+                        ComResultVO<PersonVO> personResult = BActionXml.GetInstance().GetPersonVO(outXml);
 
+                        if (personResult.State.Equals("success"))
+                        {
+                            //费用分解
+                            ActionLog step2 = new ActionLog
+                            {
+                                SubmitId = submitLog.Id,
+                                Step = 2,
+                                ActionName = "Divide",
+                                RequestData = BActionXml.GetInstance().GetDivideFeeXml(req)
+                            };
+
+                            cd.Divide_Web(step2.RequestData, out outXml);
+                            
+                            step2.ResponseData = outXml;
+                            BActionLog.GetInstance().Insert(step2);
+
+                            ComResultVO<TradeVO> tradeResult = BActionXml.GetInstance().GetTradeVO(outXml);
+
+                            if(tradeResult.State.Equals("success"))
+                            {
+                                //交易确认
+                                ActionLog step3 = new ActionLog
+                                {
+                                    SubmitId = submitLog.Id,
+                                    Step = 3,
+                                    ActionName = "Trade" 
+                                };
+                                cd.Trade_Web(out outXml);
+                                step3.ResponseData = outXml;
+                                BActionLog.GetInstance().Insert(step3);                              
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)

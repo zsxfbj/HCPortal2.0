@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using HC.Entity;
 
@@ -47,7 +48,7 @@ namespace HC.SQLServerDAL
 
                 ParamsCache.CacheParameterSet(Database.CONN_STRING_NON_DTC, "SQL_UPDATE_SUBMIT_LOG", parms);
             }
-            Database.ExecuteNonQuery(Database.CONN_STRING_NON_DTC, SQL_UPDATE_SUBMIT_LOG, parms);
+            Database.ExecuteNonQuery(Database.CONN_STRING_NON_DTC, CommandType.Text, SQL_UPDATE_SUBMIT_LOG, parms);
         }
         #endregion public void Update(string resultContent, int flag, long id)
 
@@ -72,7 +73,7 @@ namespace HC.SQLServerDAL
                 ParamsCache.CacheParameterSet(Database.CONN_STRING_NON_DTC, "SQL_SINGLE_SUBMIT_LOG_BY_FLAG", parm);
             }
 
-            using(SqlDataReader dr = Database.ExecuteReader(Database.CONN_STRING_NON_DTC, SQL_SINGLE_SUBMIT_LOG_BY_FLAG, parm))
+            using(SqlDataReader dr = Database.ExecuteReader(Database.CONN_STRING_NON_DTC, CommandType.Text, SQL_SINGLE_SUBMIT_LOG_BY_FLAG, parm))
             {
                 if (dr.Read())
                 {

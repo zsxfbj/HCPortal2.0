@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
+using System.Data.SqlClient;
 using HC.Entity;
 
 namespace HC.SQLServerDAL
@@ -51,7 +52,7 @@ namespace HC.SQLServerDAL
                 parms[4].Value = entity.ResponseData;
                 ParamsCache.CacheParameterSet(Database.CONN_STRING_NON_DTC, "SQL_INSERT_ACTION_LOG", parms);
             }
-            Database.ExecuteNonQuery(Database.CONN_STRING_NON_DTC, SQL_INSERT_ACTION_LOG, parms);
+            Database.ExecuteNonQuery(Database.CONN_STRING_NON_DTC, CommandType.Text, SQL_INSERT_ACTION_LOG, parms);
         }
         #endregion public void Insert(ActionLog entity)
 

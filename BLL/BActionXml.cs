@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using HC.Model.DTO;
@@ -67,7 +67,7 @@ namespace HC.BLL
 
             //查询输出部分
             XmlNode outputNode = rootNode.SelectSingleNode("output");
-            if(outputNode != null)
+            if (outputNode != null)
             {
                 PersonVO personInfo = new PersonVO();
 
@@ -75,7 +75,6 @@ namespace HC.BLL
                 XmlNode icNode = outputNode.SelectSingleNode("ic");
                 if (icNode != null)
                 {
-
                     //社保卡号
                     personInfo.CardNumber = GetSubNodeValue(icNode, "card_no");
 
@@ -151,9 +150,9 @@ namespace HC.BLL
             //交易信息
             sb.AppendLine("<tradeinfo>");
             sb.AppendLine("<curetype>17</curetype><illtype>0</illtype>");
-            sb.AppendLine("<feeno>"+ req.FeeNumber +"</feeno>");
+            sb.AppendLine("<feeno>" + req.FeeNumber + "</feeno>");
             sb.AppendLine("<Histradeno>" + req.FeeNumber + "</Histradeno>");
-            sb.AppendLine("<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) +  "</operator>");
+            sb.AppendLine("<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) + "</operator>");
             sb.AppendLine("</tradeinfo>");
 
             //单据信息
@@ -168,7 +167,7 @@ namespace HC.BLL
             sb.AppendLine("<sectioncode>" + req.SectionCode.Trim() + "</sectioncode>");
             sb.AppendLine("<sectionname>" + req.SectionName.Trim() + "</sectionname>");
             sb.AppendLine("<hissectionname></hissectionname>");
-            sb.AppendLine("<drid>"+(string.IsNullOrEmpty(req.DoctorId) ? "" : req.DoctorId.Trim())+"</drid>");
+            sb.AppendLine("<drid>" + (string.IsNullOrEmpty(req.DoctorId) ? "" : req.DoctorId.Trim()) + "</drid>");
             sb.AppendLine("<drname>" + (string.IsNullOrEmpty(req.DoctorName) ? "" : req.DoctorName.Trim()) + "</drname>");
             sb.AppendLine(" <recipetype>1</recipetype>");
             sb.AppendLine("<remark></remark>");
@@ -183,9 +182,9 @@ namespace HC.BLL
             sb.Append("<feeitem itemno=\"1\" recipeno=\"1\" hiscode=\"" + req.HisCode + "\" ");
             sb.Append("itemname=\"" + req.ItemName.Trim());
             sb.Append("\" itemtype=\"1\" ");
-            sb.Append("unitprice=\" "+req.UnitPrice.ToString("#0.####")+" \" ");
+            sb.Append("unitprice=\" " + req.UnitPrice.ToString("#0.####") + " \" ");
             sb.Append("count=\"1\" ");
-            sb.Append("fee=\""+req.Fee.ToString("#0.####")+"\" ");
+            sb.Append("fee=\"" + req.Fee.ToString("#0.####") + "\" ");
             sb.AppendLine("dose=\"\" specification=\"\" unit=\"\" howtouse=\"\" dosage=\"\" packaging=\"\" minpackage=\"\" conversion=\"\" days=\"\" babyflag=\"0\"></feeitem>");
             sb.AppendLine("</feeitemarray>");
 
@@ -205,18 +204,18 @@ namespace HC.BLL
         /// <returns></returns>
         public ComResultVO<TradeVO> GetTradeVO(string outXml)
         {
-            ComResultVO<TradeVO> comResult = new ComResultVO<TradeVO> ();
+            ComResultVO<TradeVO> comResult = new ComResultVO<TradeVO>();
 
             XmlDocument document = new XmlDocument();
             document.LoadXml(outXml);
             //获取根节点
             XmlNode rootNode = document.SelectSingleNode("root");
             //获取警告或者出错信息
-            GetBaseInfo<TradeVO>(rootNode, comResult);
+            GetBaseInfo(rootNode, comResult);
 
             //查询具体返回数据
             XmlNode outputNode = rootNode.SelectSingleNode("output");
-            if(outputNode != null)
+            if (outputNode != null)
             {
                 comResult.Data = new TradeVO();
                 //交易信息
@@ -278,6 +277,176 @@ namespace HC.BLL
             return comResult;
         }
         #endregion public ComResultVO<TradeVO> GetTradeVO(string outXml)
+
+        #region public ComResultVO<TradeResultVO> GetTradeResultVO(string outXml)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="outXml"></param>
+        /// <returns></returns>
+        public ComResultVO<TradeResultVO> GetTradeResultVO(string outXml)
+        {
+            ComResultVO<TradeResultVO> comResult = new ComResultVO<TradeResultVO>();
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(outXml);
+            //获取根节点
+            XmlNode rootNode = document.SelectSingleNode("root");
+            //获取警告或者出错信息
+            GetBaseInfo(rootNode, comResult);
+
+            //查询具体返回数据
+            XmlNode outputNode = rootNode.SelectSingleNode("output");
+            if (outputNode != null)
+            {
+                comResult.Data = new TradeResultVO();
+
+                decimal.TryParse(GetSubNodeValue(outputNode, "personcountaftersub"), out decimal amount);
+                comResult.Data.PersonAccountAfterSubtractAmount = amount;
+                comResult.Data.CertId = GetSubNodeValue(outputNode, "certid");
+                comResult.Data.Sign = GetSubNodeValue(outputNode, "sign");
+            }
+            return comResult;
+        }
+        #endregion public ComResultVO<TradeResultVO> GetTradeResultVO(string outXml)
+
+        #region public string GetRefundmentXml(RefundmentReqDTO req)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        public string GetRefundmentXml(RefundmentReqDTO req)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(XmlStart);
+            sb.AppendLine("<input>");
+
+            //交易信息
+            sb.AppendLine("<tradeinfo>");
+            sb.AppendLine("<tradeno>" + req.TradeNumber + "</tradeno>");
+            sb.AppendLine("<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) + "</operator>");
+            sb.AppendLine("</tradeinfo>");
+
+            //输入结束标记
+            sb.AppendLine("</input>");
+
+            sb.Append(XmlEnd);
+            return sb.ToString();
+        }
+        #endregion public string GetRefundmentXml(RefundmentReqDTO req)
+
+        #region public ComResultVO<RefundTradeVO> GetRefundTradeVO(string outXml)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="outXml"></param>
+        /// <returns></returns>
+        public ComResultVO<RefundTradeVO> GetRefundTradeVO(string outXml)
+        {
+            ComResultVO<RefundTradeVO> comResult = new ComResultVO<RefundTradeVO>();
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(outXml);
+            //获取根节点
+            XmlNode rootNode = document.SelectSingleNode("root");
+            //获取警告或者出错信息
+            GetBaseInfo(rootNode, comResult);
+
+            XmlNode outputNode = rootNode.SelectSingleNode("output");
+            if (outputNode != null)
+            {
+                comResult.Data = new RefundTradeVO();
+
+
+                XmlNode fullTradeNode = outputNode.SelectSingleNode("fulltrade");
+                if (fullTradeNode != null)
+                {
+                    //交易信息
+                    XmlNode tradeNode = outputNode.SelectSingleNode("tradeinfo");
+                    if (tradeNode != null)
+                    {
+                        //交易流水号
+                        comResult.Data.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
+
+                        //交易流水号
+                        comResult.Data.IllType = GetSubNodeValue(tradeNode, "illtype");
+
+                        //医保应用号
+                        comResult.Data.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
+
+                        //交易流水号
+                        comResult.Data.CureType = GetSubNodeValue(tradeNode, "curetype");
+
+                        //交易日期
+                        comResult.Data.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
+                    }
+
+                    //费用明细
+                    XmlNode feeItemsNode = outputNode.SelectSingleNode("feeitemarray");
+                    if (feeItemsNode != null)
+                    {
+                        comResult.Data.FeeItems = new System.Collections.Generic.List<FeeItemVO>();
+                        foreach (XmlNode feeItemNode in feeItemsNode.ChildNodes)
+                        {
+                            //添加到计费明细项
+                            comResult.Data.FeeItems.Add(GetFeeItemVO(feeItemNode));
+                        }
+                    }
+
+                    //汇总支付信息
+                    XmlNode summaryPayNode = outputNode.SelectSingleNode("sumpay");
+                    if (summaryPayNode != null)
+                    {
+                        comResult.Data.SummaryPay = GetSummaryPay(summaryPayNode);
+                    }
+
+                    //支付信息
+                    XmlNode paymentNode = outputNode.SelectSingleNode("payinfo");
+                    if (paymentNode != null)
+                    {
+                        comResult.Data.Payment = GetPayment(paymentNode);
+                    }
+                }
+
+            }
+
+            return comResult;
+        }
+        #endregion public ComResultVO<RefundTradeVO> GetRefundTradeVO(string outXml)
+
+        #region public ComResultVO<TradeStateVO> GetTradeStateVO(string outXml)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="outXml"></param>
+        /// <returns></returns>
+        public ComResultVO<TradeStateVO> GetTradeStateVO(string outXml)
+        {
+            ComResultVO<TradeStateVO> comResult = new ComResultVO<TradeStateVO>();
+            XmlDocument document = new XmlDocument();
+            document.LoadXml(outXml);
+            //获取根节点
+            XmlNode rootNode = document.SelectSingleNode("root");
+            //获取警告或者出错信息
+            GetBaseInfo(rootNode, comResult);
+
+            XmlNode outputNode = rootNode.SelectSingleNode("output");
+            if (outputNode != null)
+            {
+                comResult.Data = new TradeStateVO();
+                comResult.Data.State = GetSubNodeValue(outputNode, "tradestate");
+                if (comResult.Data.State.Equals("ok", StringComparison.OrdinalIgnoreCase))
+                {
+                    comResult.Data.StateName = "交易成功";
+                }
+                else
+                {
+                    comResult.Data.StateName = "交易撤销";
+                }
+            }
+
+            return comResult;
+        }
+        #endregion public ComResultVO<TradeStateVO> GetTradeStateVO(string outXml)
 
         #region private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
         private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
@@ -578,7 +747,7 @@ namespace HC.BLL
             XmlNode childNpde = parentNode.SelectSingleNode(nodeName);
             if (childNpde != null)
             {
-                return childNpde.InnerText;               
+                return childNpde.InnerText;
             }
             return null;
         }
