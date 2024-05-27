@@ -95,13 +95,13 @@ namespace HC.WinService
             {
                 SubmitLog submitLog = BSubmitLog.GetInstance().GetSubmitLogByFlag(0);
                 if(submitLog != null)
-                {
-                    DivideTradeResultVO divideTradeResult = new DivideTradeResultVO();
-                    
+                {                      
                     //开始拆分任务
                     WebRegClass cd = new WebRegClass();
                     if(submitLog.SubmitType == 1)
                     {
+                        //DivideTradeResultVO divideTradeResult = new DivideTradeResultVO();
+
                         DivideReqDTO req = JsonConvert.DeserializeObject<DivideReqDTO>(submitLog.SubmitContent);
 
                         ActionLog step1 = new ActionLog
@@ -120,7 +120,7 @@ namespace HC.WinService
 
                         ComResultVO<PersonVO> personResult = BActionXml.GetInstance().GetPersonVO(outXml);
 
-                        if (personResult.State.Equals("success"))
+                        if (personResult.State.Equals("true"))
                         {
                             //费用分解
                             ActionLog step2 = new ActionLog
@@ -138,7 +138,7 @@ namespace HC.WinService
 
                             ComResultVO<TradeVO> tradeResult = BActionXml.GetInstance().GetTradeVO(outXml);
 
-                            if(tradeResult.State.Equals("success"))
+                            if(tradeResult.State.Equals("true"))
                             {
                                 //交易确认
                                 ActionLog step3 = new ActionLog
@@ -152,7 +152,87 @@ namespace HC.WinService
                                 BActionLog.GetInstance().Insert(step3);                              
                             }
                         }
+
+                        //TODU 后续处理
+
+
                     }
+                    else if(submitLog.SubmitType == 2)
+                    {
+                        RefundmentReqDTO req = JsonConvert.DeserializeObject<RefundmentReqDTO>(submitLog.SubmitContent);
+
+                        ActionLog step1 = new ActionLog
+                        {
+                            SubmitId = submitLog.Id,
+                            Step = 1,
+                            ActionName = "GetPerson",
+                            RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
+                        };
+
+                        cd.GetPersonInfo_Web(step1.RequestData, out string outXml);
+
+                        step1.ResponseData = outXml;
+                        BActionLog.GetInstance().Insert(step1);
+
+
+                        ComResultVO<PersonVO> personResult = BActionXml.GetInstance().GetPersonVO(outXml);
+
+                        if (personResult.State.Equals("true"))
+                        {
+                            //费用分解
+                            ActionLog step2 = new ActionLog
+                            {
+                                SubmitId = submitLog.Id,
+                                Step = 2,
+                                ActionName = "Refundment",
+                                RequestData = BActionXml.GetInstance().GetRefundmentXml(req)
+                            };
+
+                            cd.Refundment_Web(step2.RequestData, out outXml);
+
+                            step2.ResponseData = outXml;
+                            BActionLog.GetInstance().Insert(step2);
+
+                            ComResultVO<RefundTradeVO> refundResult = BActionXml.GetInstance().GetRefundTradeVO(outXml);
+
+                            if (refundResult.State.Equals("true"))
+                            {
+                                //交易确认
+                                ActionLog step3 = new ActionLog
+                                {
+                                    SubmitId = submitLog.Id,
+                                    Step = 3,
+                                    ActionName = "Trade"
+                                };
+                                cd.Trade_Web(out outXml);
+                                step3.ResponseData = outXml;
+                                BActionLog.GetInstance().Insert(step3);
+                            }
+                        }
+
+                        //TODU 后续处理
+                    }
+                    else
+                    {
+                        ActionLog step1 = new ActionLog
+                        {
+                            SubmitId = submitLog.Id,
+                            Step = 1,
+                            ActionName = "GetTradeState",
+                            RequestData = submitLog.SubmitContent
+                        };
+
+                        cd.CommitTradeState_Web(step1.RequestData, out string outXml);
+
+                        step1.ResponseData = outXml;
+                        BActionLog.GetInstance().Insert(step1);
+
+
+                        ComResultVO<TradeStateVO> tradeStateResult = BActionXml.GetInstance().GetTradeStateVO(outXml);
+
+                        //TODU 后续处理
+                    }
+
                 }
             }
             catch (Exception ex)

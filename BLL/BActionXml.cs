@@ -448,6 +448,8 @@ namespace HC.BLL
         }
         #endregion public ComResultVO<TradeStateVO> GetTradeStateVO(string outXml)
 
+
+
         #region private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
         private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
         {
