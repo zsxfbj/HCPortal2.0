@@ -10,27 +10,28 @@ namespace HC.Model.VO
     public class ComResultVO<T>
     {
         /// <summary>
+        /// 版本号
+        /// </summary>
+        [JsonProperty("version")]
+        public string Version { get; set; }
+
+        /// <summary>
         /// 状态
         /// </summary>
         [JsonProperty("state")]
-        public string State {  get; set; }
-
-        /// <summary>
-        /// 警告信息
-        /// </summary>
-        [JsonProperty("warnings")]
-        public List<ErrorMessageVO> Warnings { get; set; }
-
-        /// <summary>
-        /// 错误消息
-        /// </summary>
-        [JsonProperty("errors")]
-        public List<ErrorMessageVO> Errors { get; set; }
+        public StateVO State {  get; set; }
 
         /// <summary>
         /// 返回的数据
         /// </summary>
-        [JsonProperty("data")]
-        public T Data { get; set; }
+        [JsonProperty("output")]
+        public T Output { get; set; }
+
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
+        public ComResultVO() {
+            Version = "1.10.0004";
+        }
     }
 }

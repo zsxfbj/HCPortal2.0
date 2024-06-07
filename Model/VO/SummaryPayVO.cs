@@ -11,28 +11,28 @@ namespace HC.Model.VO
         /// <summary>
         /// 费用总金额，精确到小数点2位
         /// </summary>
-        [JsonProperty("totalAmount")]
+        [JsonProperty("feeall")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal TotalAmount {  get; set; }
 
         /// <summary>
         /// 基金支付金额，精确到小数点2位
         /// </summary>
-        [JsonProperty("fundAmount")]
+        [JsonProperty("fund")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal FundAmount {  get; set; }
 
         /// <summary>
         /// 现金支付金额，精确到小数点2位
         /// </summary>
-        [JsonProperty("cashAmount")]
+        [JsonProperty("cash")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal CashAmount { get; set; }
 
         /// <summary>
         /// 个人帐户支付金额，精确到小数点2位
         /// </summary>
-        [JsonProperty("personAccountAmount")]
+        [JsonProperty("personcountpay")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal PersonAccountAmount { get; set; }
     }

@@ -44,17 +44,20 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VO\ComResultVO.cs" />
     <Compile Include="VO\DivideTradeResultVO.cs" />
+    <Compile Include="VO\FeeItemsVO.cs" />
     <Compile Include="VO\FeeItemVO.cs" />
     <Compile Include="VO\MedicineCatalog2VO.cs" />
     <Compile Include="VO\MedicineCatalogVO.cs" />
     <Compile Include="VO\PaymentVO.cs" />
     <Compile Include="VO\PersonVO.cs" />
     <Compile Include="VO\RefundTradeVO.cs" />
+    <Compile Include="VO\StateVO.cs" />
     <Compile Include="VO\SummaryPayVO.cs" />
     <Compile Include="VO\TradeResultVO.cs" />
     <Compile Include="VO\TradeStateVO.cs" />
+    <Compile Include="VO\TradeDivideVO.cs" />
+    <Compile Include="VO\ErrorMessageVO.cs" />
     <Compile Include="VO\TradeVO.cs" />
-    <Compile Include="VO\WarningVO.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

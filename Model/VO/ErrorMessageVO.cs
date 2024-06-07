@@ -12,12 +12,12 @@ namespace HC.Model.VO
         /// 序号
         /// </summary>
         [JsonProperty("no")]
-        public String Number { get; set; }
+        public string Number { get; set; }
 
         /// <summary>
         /// 内容
         /// </summary>
         [JsonProperty("info")]
-        public String Message { get; set; }
+        public string Message { get; set; }
     }
 }

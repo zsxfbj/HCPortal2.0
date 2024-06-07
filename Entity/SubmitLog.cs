@@ -11,12 +11,7 @@ namespace HC.Entity
         /// 自增Id
         /// </summary>
         public long Id { get; set; }
-
-        /// <summary>
-        /// 访问的Ip
-        /// </summary>
-        public string ClientIp { get; set; }
-
+           
         /// <summary>
         /// 提交类型：1-费用分解；2-退费申请；3-查询交易状态
         /// </summary>
@@ -52,8 +47,7 @@ namespace HC.Entity
         /// </summary>
         public SubmitLog()
         {
-            Id = 0;
-            ClientIp = "127.0.0.1";
+            Id = 0;           
             SubmitType = 1;
             SubmitContent = "";
             ResultContent = "";

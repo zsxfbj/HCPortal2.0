@@ -11,91 +11,91 @@ namespace HC.Model.VO
         /// <summary>
         /// 诊察费
         /// </summary>
-        [JsonProperty("diagnosisFee")]
+        [JsonProperty("diagnosis")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal DiagnosisFee { get; set; }
 
         /// <summary>
         /// 检查费
         /// </summary>
-        [JsonProperty("examineFee")]
+        [JsonProperty("examine")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal ExamineFee { get; set; }
 
         /// <summary>
         /// 化验费
         /// </summary>
-        [JsonProperty("labExamFee")]
+        [JsonProperty("labexam")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal LabExamFee { get; set; }
 
         /// <summary>
         /// 治疗费
         /// </summary>
-        [JsonProperty("treatmentFee")]
+        [JsonProperty("treatment")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal TreatmentFee { get; set; }
 
         /// <summary>
         /// 材料费
         /// </summary>
-        [JsonProperty("materialFee")]
+        [JsonProperty("material")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal MaterialFee { get; set; }
 
         /// <summary>
         /// 手术费
         /// </summary>
-        [JsonProperty("operationFee")]
+        [JsonProperty("operation")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal OperationFee { get; set; }
 
         /// <summary>
         /// 西药费
         /// </summary>
-        [JsonProperty("medicineFee")]
+        [JsonProperty("medicine")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal MedicineFee { get; set; }
 
         /// <summary>
         /// 中成药费
         /// </summary>
-        [JsonProperty("chineseMedicineFee")]
+        [JsonProperty("tmedicine")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal ChineseMedicineFee { get; set; }
 
         /// <summary>
         /// 中草药费
         /// </summary>
-        [JsonProperty("chineseHerbalDrinkFee")]
+        [JsonProperty("therb")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal ChineseHerbalDrinkFee { get; set; }
 
         /// <summary>
         /// 医事服务费
         /// </summary>
-        [JsonProperty("medicalServiceFee")]
+        [JsonProperty("medicalservice")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal MedicalServiceFee { get; set; }
 
         /// <summary>
         /// 一般诊疗费
         /// </summary>
-        [JsonProperty("commonServiceFee")]
+        [JsonProperty("commonservice")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal CommonServiceFee {  get; set; }
 
         /// <summary>
         /// 挂号费
         /// </summary>
-        [JsonProperty("registFee")]
+        [JsonProperty("registfee")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal RegistFee { get; set; }
 
         /// <summary>
         /// 其他门诊收费
         /// </summary>
-        [JsonProperty("otherOperationFee")]
+        [JsonProperty("otheropfee")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal OtherOperationFee { get; set; }
 

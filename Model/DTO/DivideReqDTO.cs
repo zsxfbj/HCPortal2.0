@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HC.Model.VO;
 using HC.Utility.Converter;
 using Newtonsoft.Json;
 
@@ -16,24 +17,6 @@ namespace HC.Model.DTO
         public PersonInfoReqDTO Person { get; set; }
 
         /// <summary>
-        /// 社保卡卡号
-        /// </summary>        
-        [JsonProperty("cardNumber")]
-        public string CardNumber { get; set; }
-
-        /// <summary>
-        /// 医疗类别，此处目前固定为17（互联网复诊费结算）
-        /// </summary>      
-        [JsonProperty("cureType")]
-        public string CureType { get; set; }
-
-        /// <summary>
-        /// 就诊方式，目前都是0普通，取值须在字典范围内，且严禁使用汉字
-        /// </summary>       
-        [JsonProperty("illType")]
-        public string IllType { get; set; }
-
-        /// <summary>
         /// 收费单据号
         /// </summary>
         [JsonProperty("feeNumber")]       
@@ -45,12 +28,17 @@ namespace HC.Model.DTO
         [JsonProperty("operator")]      
         public string Operator { get; set; }
 
+        /// <summary>
+        /// 处方类型：1-医保内处方；2-医保外处方
+        /// </summary>        
+        [JsonProperty("recipeType")]
+        public int RecipeType { get; set; }
 
         /// <summary>
         /// 处方时间，格式为yyyyMMddHHmmss
         /// </summary>      
         [JsonProperty("recipeDate")]
-        public string RecipeDate { get; set; }
+        public int RecipeDate { get; set; }
 
         /// <summary>
         /// 就诊科别代码
@@ -101,18 +89,5 @@ namespace HC.Model.DTO
         [JsonConverter(typeof(DecimalConverter))]
         [JsonProperty("fee")]
         public decimal Fee { get; set; }
-
-        /// <summary>
-        /// 处方信息列表
-        /// </summary>
-        [JsonProperty("recipes")]
-        public List<RecipeDTO> Recipes { get; set; }
-
-        /// <summary>
-        /// 明细信息列表
-        /// </summary>
-        [JsonProperty("feeItems")]
-        public List<FeeItemDTO> FeeItems { get; set; }
-
     }
 }

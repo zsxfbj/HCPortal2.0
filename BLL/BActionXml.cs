@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using HC.Model.DTO;
@@ -128,7 +127,7 @@ namespace HC.BLL
                     //慢病编码
                     personInfo.ChronicCode = GetSubNodeValue(netNode, "chroniccode");
                 }
-                comResult.Data = personInfo;
+                comResult.Output = personInfo;
             }
 
             return comResult;
@@ -169,7 +168,7 @@ namespace HC.BLL
             sb.AppendLine("<hissectionname></hissectionname>");
             sb.AppendLine("<drid>" + (string.IsNullOrEmpty(req.DoctorId) ? "" : req.DoctorId.Trim()) + "</drid>");
             sb.AppendLine("<drname>" + (string.IsNullOrEmpty(req.DoctorName) ? "" : req.DoctorName.Trim()) + "</drname>");
-            sb.AppendLine(" <recipetype>1</recipetype>");
+            sb.AppendLine("<recipetype>" + req.RecipeType + "</recipetype>");
             sb.AppendLine("<remark></remark>");
             sb.AppendLine("<registertradeno></registertradeno>");
             sb.AppendLine("<billstype>1</billstype>");
@@ -202,9 +201,9 @@ namespace HC.BLL
         /// </summary>
         /// <param name="outXml"></param>
         /// <returns></returns>
-        public ComResultVO<TradeVO> GetTradeVO(string outXml)
+        public ComResultVO<TradeDivideVO> GetTradeVO(string outXml)
         {
-            ComResultVO<TradeVO> comResult = new ComResultVO<TradeVO>();
+            ComResultVO<TradeDivideVO> comResult = new ComResultVO<TradeDivideVO>();
 
             XmlDocument document = new XmlDocument();
             document.LoadXml(outXml);
@@ -217,30 +216,33 @@ namespace HC.BLL
             XmlNode outputNode = rootNode.SelectSingleNode("output");
             if (outputNode != null)
             {
-                comResult.Data = new TradeVO();
+                comResult.Output = new TradeDivideVO();
                 //交易信息
                 XmlNode tradeNode = outputNode.SelectSingleNode("tradeinfo");
                 if (tradeNode != null)
                 {
-                    //交易流水号
-                    comResult.Data.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
+                    comResult.Output.Trade = new TradeVO
+                    {
+                        //交易流水号
+                        TradeNumber = GetSubNodeValue(tradeNode, "tradeno"),
 
-                    //收费单据号
-                    comResult.Data.FeeNumber = GetSubNodeValue(tradeNode, "feeno");
+                        //收费单据号
+                        FeeNumber = GetSubNodeValue(tradeNode, "feeno"),
 
-                    //交易日期
-                    comResult.Data.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
+                        //交易日期
+                        TradeDate = GetSubNodeValue(tradeNode, "tradedate")
+                    };
                 }
 
                 //费用明细
                 XmlNode feeItemsNode = outputNode.SelectSingleNode("feeitemarray");
                 if (feeItemsNode != null)
                 {
-                    comResult.Data.FeeItems = new System.Collections.Generic.List<FeeItemVO>();
+                    comResult.Output.FeeItems = new FeeItemsVO();
                     foreach (XmlNode feeItemNode in feeItemsNode.ChildNodes)
                     {
                         //添加到计费明细项
-                        comResult.Data.FeeItems.Add(GetFeeItemVO(feeItemNode));
+                        comResult.Output.FeeItems.FeeItem = GetFeeItemVO(feeItemNode);
                     }
                 }
 
@@ -248,28 +250,28 @@ namespace HC.BLL
                 XmlNode summaryPayNode = outputNode.SelectSingleNode("sumpay");
                 if (summaryPayNode != null)
                 {
-                    comResult.Data.SummaryPay = GetSummaryPay(summaryPayNode);
+                    comResult.Output.SummaryPay = GetSummaryPay(summaryPayNode);
                 }
 
                 //支付信息
                 XmlNode paymentNode = outputNode.SelectSingleNode("payinfo");
                 if (paymentNode != null)
                 {
-                    comResult.Data.Payment = GetPayment(paymentNode);
+                    comResult.Output.Payment = GetPayment(paymentNode);
                 }
 
                 //分类汇总信息
                 XmlNode medicineCatalogNode = outputNode.SelectSingleNode("medicatalog");
                 if (medicineCatalogNode != null)
                 {
-                    GetMedicineCatalogVO(comResult.Data, medicineCatalogNode);
+                    GetMedicineCatalogVO(comResult.Output, medicineCatalogNode);
                 }
 
                 //新单据分类汇总信息
                 XmlNode medicineCatalog2Node = outputNode.SelectSingleNode("medicatalog2");
                 if (medicineCatalog2Node != null)
                 {
-                    GetMedicineCatalog2VO(comResult.Data, medicineCatalog2Node);
+                    GetMedicineCatalog2VO(comResult.Output, medicineCatalog2Node);
                 }
 
             }
@@ -298,12 +300,12 @@ namespace HC.BLL
             XmlNode outputNode = rootNode.SelectSingleNode("output");
             if (outputNode != null)
             {
-                comResult.Data = new TradeResultVO();
+                comResult.Output = new TradeResultVO();
 
                 decimal.TryParse(GetSubNodeValue(outputNode, "personcountaftersub"), out decimal amount);
-                comResult.Data.PersonAccountAfterSubtractAmount = amount;
-                comResult.Data.CertId = GetSubNodeValue(outputNode, "certid");
-                comResult.Data.Sign = GetSubNodeValue(outputNode, "sign");
+                comResult.Output.PersonAccountAfterSubtractAmount = amount;
+                comResult.Output.CertId = GetSubNodeValue(outputNode, "certid");
+                comResult.Output.Sign = GetSubNodeValue(outputNode, "sign");
             }
             return comResult;
         }
@@ -354,7 +356,7 @@ namespace HC.BLL
             XmlNode outputNode = rootNode.SelectSingleNode("output");
             if (outputNode != null)
             {
-                comResult.Data = new RefundTradeVO();
+                comResult.Output = new RefundTradeVO();
 
 
                 XmlNode fullTradeNode = outputNode.SelectSingleNode("fulltrade");
@@ -365,30 +367,30 @@ namespace HC.BLL
                     if (tradeNode != null)
                     {
                         //交易流水号
-                        comResult.Data.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
+                        comResult.Output.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
 
                         //交易流水号
-                        comResult.Data.IllType = GetSubNodeValue(tradeNode, "illtype");
+                        comResult.Output.IllType = GetSubNodeValue(tradeNode, "illtype");
 
                         //医保应用号
-                        comResult.Data.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
+                        comResult.Output.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
 
                         //交易流水号
-                        comResult.Data.CureType = GetSubNodeValue(tradeNode, "curetype");
+                        comResult.Output.CureType = GetSubNodeValue(tradeNode, "curetype");
 
                         //交易日期
-                        comResult.Data.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
+                        comResult.Output.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
                     }
 
                     //费用明细
                     XmlNode feeItemsNode = outputNode.SelectSingleNode("feeitemarray");
                     if (feeItemsNode != null)
                     {
-                        comResult.Data.FeeItems = new System.Collections.Generic.List<FeeItemVO>();
+                        comResult.Output.FeeItems = new System.Collections.Generic.List<FeeItemVO>();
                         foreach (XmlNode feeItemNode in feeItemsNode.ChildNodes)
                         {
                             //添加到计费明细项
-                            comResult.Data.FeeItems.Add(GetFeeItemVO(feeItemNode));
+                            comResult.Output.FeeItems.Add(GetFeeItemVO(feeItemNode));
                         }
                     }
 
@@ -396,14 +398,14 @@ namespace HC.BLL
                     XmlNode summaryPayNode = outputNode.SelectSingleNode("sumpay");
                     if (summaryPayNode != null)
                     {
-                        comResult.Data.SummaryPay = GetSummaryPay(summaryPayNode);
+                        comResult.Output.SummaryPay = GetSummaryPay(summaryPayNode);
                     }
 
                     //支付信息
                     XmlNode paymentNode = outputNode.SelectSingleNode("payinfo");
                     if (paymentNode != null)
                     {
-                        comResult.Data.Payment = GetPayment(paymentNode);
+                        comResult.Output.Payment = GetPayment(paymentNode);
                     }
                 }
 
@@ -432,15 +434,15 @@ namespace HC.BLL
             XmlNode outputNode = rootNode.SelectSingleNode("output");
             if (outputNode != null)
             {
-                comResult.Data = new TradeStateVO();
-                comResult.Data.State = GetSubNodeValue(outputNode, "tradestate");
-                if (comResult.Data.State.Equals("ok", StringComparison.OrdinalIgnoreCase))
+                comResult.Output = new TradeStateVO();
+                comResult.Output.State = GetSubNodeValue(outputNode, "tradestate");
+                if (comResult.Output.State.Equals("ok", StringComparison.OrdinalIgnoreCase))
                 {
-                    comResult.Data.StateName = "交易成功";
+                    comResult.Output.StateName = "交易成功";
                 }
                 else
                 {
-                    comResult.Data.StateName = "交易撤销";
+                    comResult.Output.StateName = "交易撤销";
                 }
             }
 
@@ -448,55 +450,49 @@ namespace HC.BLL
         }
         #endregion public ComResultVO<TradeStateVO> GetTradeStateVO(string outXml)
 
-
-
         #region private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
         private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
         {
+            //版本号
+            comResult.Version  = (rootNode.Attributes["version"] != null) ? rootNode.Attributes["version"].Value : "";
             //先读取是否成功
             XmlNode stateNode = rootNode.SelectSingleNode("state");
             if (stateNode != null)
             {
-                comResult.State = stateNode.Attributes["success"].Value;
+                comResult.State = new StateVO();
+
+                comResult.State.Success = stateNode.Attributes["success"].Value;
 
                 XmlNodeList warnings = stateNode.SelectNodes("warning");
                 if (warnings != null && warnings.Count > 0)
                 {
-                    comResult.Warnings = new List<ErrorMessageVO>();
-                    foreach (XmlNode warning in warnings)
+                    comResult.State.Warning = new ErrorMessageVO();
+                    XmlNode warning = warnings[0];
+                    if (warning.Attributes["no"] != null)
                     {
-                        ErrorMessageVO vo = new ErrorMessageVO();
-                        if (warning.Attributes["no"] != null)
-                        {
-                            vo.Number = warning.Attributes["no"].Value;
-                        }
-                        if (warning.Attributes["info"] != null)
-                        {
-                            vo.Message = warning.Attributes["info"].Value;
-                        }
-                        comResult.Warnings.Add(vo);
+                        comResult.State.Warning.Number = warning.Attributes["no"].Value;
+                    }
+                    if (warning.Attributes["info"] != null)
+                    {
+                        comResult.State.Warning.Message = warning.Attributes["info"].Value;
                     }
                 }
 
                 XmlNodeList errors = stateNode.SelectNodes("error");
                 if (errors != null && errors.Count > 0)
                 {
-                    comResult.Errors = new List<ErrorMessageVO>();
-                    foreach (XmlNode error in errors)
+                    comResult.State.Error = new ErrorMessageVO();
+
+                    XmlNode error = errors[0];
+                    if (error.Attributes["no"] != null)
                     {
-                        ErrorMessageVO vo = new ErrorMessageVO();
-                        if (error.Attributes["no"] != null)
-                        {
-                            vo.Number = error.Attributes["no"].Value;
-                        }
-                        if (error.Attributes["info"] != null)
-                        {
-                            vo.Message = error.Attributes["info"].Value;
-                        }
-                        comResult.Errors.Add(vo);
+                        comResult.State.Error.Number = error.Attributes["no"].Value;
+                    }
+                    if (error.Attributes["info"] != null)
+                    {
+                        comResult.State.Error.Message = error.Attributes["info"].Value;
                     }
                 }
-
             }
         }
         #endregion private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
@@ -512,8 +508,8 @@ namespace HC.BLL
             FeeItemVO feeItem = new FeeItemVO();
 
             int.TryParse(feeItemNode.Attributes["itemno"].Value, out int itemNumber);
-
             feeItem.ItemNumber = itemNumber;
+
             feeItem.RecipeNumber = feeItemNode.Attributes["recipeno"].Value;
             feeItem.HisCode = feeItemNode.Attributes["hiscode"].Value;
             feeItem.ItemCode = feeItemNode.Attributes["itemcode"].Value;
@@ -595,6 +591,9 @@ namespace HC.BLL
             decimal.TryParse(GetSubNodeValue(paymentNode, "mzfeein"), out decimal inInsuranceAmount);
             vo.InInsuranceAmount = inInsuranceAmount;
 
+            decimal.TryParse(GetSubNodeValue(paymentNode, "mzfeeout"), out decimal outInsuranceAmount);
+            vo.OutInsuranceAmount = outInsuranceAmount;
+
             decimal.TryParse(GetSubNodeValue(paymentNode, "mzpayfirst"), out decimal firstPayAmount);
             vo.FirstPayAmount = firstPayAmount;
 
@@ -626,7 +625,7 @@ namespace HC.BLL
         /// </summary>
         /// <param name="trade"></param>
         /// <param name="medicineCatalogNode"></param>
-        private void GetMedicineCatalogVO(TradeVO trade, XmlNode medicineCatalogNode)
+        private void GetMedicineCatalogVO(TradeDivideVO trade, XmlNode medicineCatalogNode)
         {
             trade.MedicineCatalog = new MedicineCatalogVO();
 
@@ -692,7 +691,7 @@ namespace HC.BLL
         /// </summary>
         /// <param name="trade"></param>
         /// <param name="medicineCatalog2Node"></param>
-        private void GetMedicineCatalog2VO(TradeVO trade, XmlNode medicineCatalog2Node)
+        private void GetMedicineCatalog2VO(TradeDivideVO trade, XmlNode medicineCatalog2Node)
         {
             trade.MedicineCatalog2 = new MedicineCatalog2VO();
 

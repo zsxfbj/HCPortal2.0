@@ -11,43 +11,43 @@ namespace HC.Model.VO
         /// <summary>
         /// 项目序号，为顺序号
         /// </summary> 
-        [JsonProperty("itemNumber")]
+        [JsonProperty("itemno")]
         public int ItemNumber { get; set; }
 
         /// <summary>
         /// 处方序号
         /// </summary>      
-        [JsonProperty("recipeNumber")]
+        [JsonProperty("recipeno")]
         public string RecipeNumber { get; set; }
 
         /// <summary>
         /// HIS项目代码：药品、诊疗项目或服务设施编码
         /// </summary>    
-        [JsonProperty("hisCode")]
+        [JsonProperty("hiscode")]
         public string HisCode { get; set; }
 
         /// <summary>
         /// 医保项目代码：药品、诊疗项目或服务设施医保编码
         /// </summary>    
-        [JsonProperty("itemCode")]
+        [JsonProperty("itemcode")]
         public string ItemCode { get; set; }
 
         /// <summary>
         /// 医保项目名称，本医院项目名称
         /// </summary>            
-        [JsonProperty("itemName")]
+        [JsonProperty("itemname")]
         public string ItemName { get; set; }
 
         /// <summary>
         /// 项目类型：0-药品 1-诊疗项目 2-服务设施
         /// </summary>      
-        [JsonProperty("itemType")]
+        [JsonProperty("itemtype")]
         public int ItemType { get; set; }
 
         /// <summary>
         /// 单价，最多4位小数
         /// </summary>        
-        [JsonProperty("unitPrice")]
+        [JsonProperty("unitprice")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal UnitPrice { get; set; }
 
@@ -69,21 +69,21 @@ namespace HC.Model.VO
         /// <summary>
         /// 医保内总金额，精确到小数点2位
         /// </summary>
-        [JsonProperty("inInsuranceFee")]
+        [JsonProperty("feein")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal InInsuranceFee { get; set; }
 
         /// <summary>
         /// 医保外总金额，精确到小数点2位
         /// </summary>
-        [JsonProperty("outInsuranceFee")]
+        [JsonProperty("feeout")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal OutInsuranceFee { get; set; }
 
         /// <summary>
         /// 个人自付2金额
         /// </summary>
-        [JsonProperty("selfPayFee")]
+        [JsonProperty("selfpay2")]
         [JsonConverter(typeof(DecimalConverter))]
         public decimal SelfPayFee { get; set; }
 
@@ -96,20 +96,20 @@ namespace HC.Model.VO
         /// <summary>
         /// 收费类别，参见标准AKA063
         /// </summary>
-        [JsonProperty("feeType")]
+        [JsonProperty("fee_type")]
         public string FeeType { get; set; }
 
         /// <summary>
         /// 社区优惠金额
         /// </summary>
         [JsonConverter(typeof(DecimalConverter))]
-        [JsonProperty("preferentialFee")]
+        [JsonProperty("preferentialfee")]
         public decimal PreferentialFee { get; set; }
 
         /// <summary>
         /// 整数，如优惠10%，则表示为“10
         /// </summary>       
-        [JsonProperty("preferentialScale")]
+        [JsonProperty("preferentialscale")]
         public int PreferentialScale { get; set; }
 
     }

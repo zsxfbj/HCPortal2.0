@@ -1,9 +1,6 @@
 using System;
 using System.Windows.Forms;
-using HC.BLL;
-using HC.Model.VO;
 using MSXML2;
-using Newtonsoft.Json;
 using WebRegComLib;
 
 namespace HC.WinService;
@@ -23,6 +20,7 @@ public class Form1 : Form
     private Button btnGetPersonInfo;
     private Button btnStartService;
     private WebRegClass cd;
+    private CheckBox chkIsTest;
     private MainJobThread mainJobThread;
 
 
@@ -38,6 +36,7 @@ public class Form1 : Form
             this.btnDivide = new System.Windows.Forms.Button();
             this.btnGetPersonInfo = new System.Windows.Forms.Button();
             this.btnStartService = new System.Windows.Forms.Button();
+            this.chkIsTest = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -148,12 +147,23 @@ public class Form1 : Form
             this.btnStartService.UseVisualStyleBackColor = true;
             this.btnStartService.Click += new System.EventHandler(this.btnStartService_Click);
             // 
+            // chkIsTest
+            // 
+            this.chkIsTest.AutoSize = true;
+            this.chkIsTest.Location = new System.Drawing.Point(848, 25);
+            this.chkIsTest.Name = "chkIsTest";
+            this.chkIsTest.Size = new System.Drawing.Size(111, 24);
+            this.chkIsTest.TabIndex = 11;
+            this.chkIsTest.Text = "是否模拟";
+            this.chkIsTest.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(971, 475);
+            this.Controls.Add(this.chkIsTest);
             this.Controls.Add(this.btnStartService);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -163,6 +173,7 @@ public class Form1 : Form
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
     }
 
