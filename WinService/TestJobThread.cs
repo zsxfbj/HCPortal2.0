@@ -111,7 +111,7 @@ namespace HC.WinService
                         {
                             SubmitId = submitLog.Id,
                             Step = 1,
-                            ActionName = "GetPerson",
+                            ActionName = "GetPersonInWeb",
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
                         };
                         ComResultVO<PersonVO> personResult = new ComResultVO<PersonVO>
@@ -136,6 +136,8 @@ namespace HC.WinService
 
                         step1.ResponseData = JsonConvert.SerializeObject(personResult);
 
+                        ShowMessage("GetPersonInWeb模拟请求返回结果：" + step1.RequestData);
+
                         BActionLog.GetInstance().Insert(step1);
 
                         if (personResult.State.Equals("true"))
@@ -145,7 +147,7 @@ namespace HC.WinService
                             {
                                 SubmitId = submitLog.Id,
                                 Step = 2,
-                                ActionName = "Divide",
+                                ActionName = "DivideInWeb",
                                 RequestData = BActionXml.GetInstance().GetDivideFeeXml(req)
                             };
 
@@ -158,21 +160,25 @@ namespace HC.WinService
                             };
                             tradeResult.Output = new TradeDivideVO
                             {
-                                TradeNumber = IdHelper.IdWorker.NextId().ToString(),
-                                TradeDate = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                                FeeNumber = req.FeeNumber,
+                                Trade = new TradeVO
+                                {
+                                    TradeNumber = IdHelper.IdWorker.NextId().ToString(),
+                                    TradeDate = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                                    FeeNumber = req.FeeNumber
+                                },
+                                
                                 SummaryPay = new SummaryPayVO
                                 {
                                     TotalAmount = req.Fee,
                                     PersonAccountAmount = 0,
-                                    CashAmount = 10,
-                                    FundAmount = 40
+                                    CashAmount = req.Fee == 50 ? 10 : req.Fee,
+                                    FundAmount = req.Fee == 50 ? 40 : 0
                                 },
                                 Payment = new PaymentVO
                                  {
-                                     SelfPayAmount = 10,
+                                     SelfPayAmount = req.Fee == 50 ? 10 : req.Fee,
                                      SupplementaryPayAmount = 0,
-                                     BigPayAmount = 40,
+                                     BigPayAmount = req.Fee == 50 ? 40 : 0,
                                      FirstPayAmount = 0,
                                      TotalAmount = req.Fee,
                                      MilitaryPayAmount = 0,
@@ -180,6 +186,21 @@ namespace HC.WinService
                                      InInsuranceAmount = 0,
                                      OutInsuranceAmount = 0,
                                      OutOfBigPayAmount = 0
+                                 },
+                                 MedicineCatalog = new MedicineCatalogVO
+                                 {
+
+                                 },
+                                 MedicineCatalog2 = new MedicineCatalog2VO
+                                 {
+
+                                 },
+                                 FeeItems = new FeeItemsVO
+                                 {
+                                      FeeItem = new FeeItemVO
+                                      {
+
+                                      }
                                  }
                             };
                          
@@ -200,7 +221,7 @@ namespace HC.WinService
                                     ActionName = "Trade"
                                 };
                                 
-                                step3.ResponseData = outXml;
+                                step3.ResponseData = "";
                                 BActionLog.GetInstance().Insert(step3);
                             }
                         }
@@ -221,13 +242,13 @@ namespace HC.WinService
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
                         };
 
-                        cd.GetPersonInfo_Web(step1.RequestData, out string outXml);
+                      
 
-                        step1.ResponseData = outXml;
+                        step1.ResponseData = "";
                         BActionLog.GetInstance().Insert(step1);
 
 
-                        ComResultVO<PersonVO> personResult = BActionXml.GetInstance().GetPersonVO(outXml);
+                        ComResultVO<PersonVO> personResult = new ComResultVO<PersonVO>();
 
                         if (personResult.State.Equals("true"))
                         {
@@ -240,12 +261,12 @@ namespace HC.WinService
                                 RequestData = BActionXml.GetInstance().GetRefundmentXml(req)
                             };
 
-                            cd.Refundment_Web(step2.RequestData, out outXml);
+                           
 
-                            step2.ResponseData = outXml;
+                            step2.ResponseData = "";
                             BActionLog.GetInstance().Insert(step2);
 
-                            ComResultVO<RefundTradeVO> refundResult = BActionXml.GetInstance().GetRefundTradeVO(outXml);
+                            ComResultVO<RefundTradeVO> refundResult = new ComResultVO<RefundTradeVO>();
 
                             if (refundResult.State.Equals("true"))
                             {
@@ -256,8 +277,8 @@ namespace HC.WinService
                                     Step = 3,
                                     ActionName = "Trade"
                                 };
-                                cd.Trade_Web(out outXml);
-                                step3.ResponseData = outXml;
+                             
+                                step3.ResponseData = "";
                                 BActionLog.GetInstance().Insert(step3);
                             }
                         }
@@ -274,13 +295,13 @@ namespace HC.WinService
                             RequestData = submitLog.SubmitContent
                         };
 
-                        cd.CommitTradeState_Web(step1.RequestData, out string outXml);
+                      
 
-                        step1.ResponseData = outXml;
+                        step1.ResponseData = "";
                         BActionLog.GetInstance().Insert(step1);
 
 
-                        ComResultVO<TradeStateVO> tradeStateResult = BActionXml.GetInstance().GetTradeStateVO(outXml);
+                        ComResultVO<TradeStateVO> tradeStateResult = new ComResultVO<TradeStateVO>();
 
                         //TODU 后续处理
                     }
