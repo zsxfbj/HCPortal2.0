@@ -74,14 +74,7 @@ namespace HC.Model.DTO
         /// HIS项目名称，本医院项目名称
         /// </summary>      
         [JsonProperty("itemName")]
-        public string ItemName { get; set; }
-
-        /// <summary>
-        /// 单价，最多4位小数
-        /// </summary>       
-        [JsonConverter(typeof(DecimalConverter))]
-        [JsonProperty("unitPrice")]
-        public decimal UnitPrice { get; set; }
+        public string ItemName { get; set; }     
 
         /// <summary>
         /// 项目总金额，该项目总金额，最多4位小数

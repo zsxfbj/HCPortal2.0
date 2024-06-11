@@ -181,7 +181,7 @@ namespace HC.BLL
             sb.Append("<feeitem itemno=\"1\" recipeno=\"1\" hiscode=\"" + req.HisCode + "\" ");
             sb.Append("itemname=\"" + req.ItemName.Trim());
             sb.Append("\" itemtype=\"1\" ");
-            sb.Append("unitprice=\" " + req.UnitPrice.ToString("#0.####") + " \" ");
+            sb.Append("unitprice=\" " + req.Fee.ToString("#0.####") + " \" ");
             sb.Append("count=\"1\" ");
             sb.Append("fee=\"" + req.Fee.ToString("#0.####") + "\" ");
             sb.AppendLine("dose=\"\" specification=\"\" unit=\"\" howtouse=\"\" dosage=\"\" packaging=\"\" minpackage=\"\" conversion=\"\" days=\"\" babyflag=\"0\"></feeitem>");
