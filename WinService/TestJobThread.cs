@@ -117,21 +117,7 @@ namespace HC.WinService
                         ComResultVO<PersonVO> personResult = new ComResultVO<PersonVO>
                         {
                             State = new StateVO { Success = "true" },
-                            Output = new PersonVO
-                            {
-                                Birthday = req.Person.Birthday,
-                                IdNumber = req.Person.IdNumber,
-                                CardNumber = req.Person.CardNumber,
-                                PersonName = req.Person.PersonName,
-                                PersonType = "",
-                                FromHospitalDate = "18991230",
-                                Sex = req.Person.Sex,
-                                FundType = "91",
-                                IcNumber = req.Person.CardNumber,
-                                IsSpecifiedHospital = "1",
-                                IsChronicHospital = "false",
-                                IsInRedList = "true"
-                            }
+                            Output = BActionXml.GetInstance().GetPersonVO(req.Person)
                         };
 
                         step1.ResponseData = JsonConvert.SerializeObject(personResult);
@@ -298,16 +284,21 @@ namespace HC.WinService
                         {
                             SubmitId = submitLog.Id,
                             Step = 1,
-                            ActionName = "GetPerson",
+                            ActionName = "GetPersonInWeb",
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
                         };
+                        ComResultVO<PersonVO> personResult = new ComResultVO<PersonVO>
+                        {
+                            State = new StateVO { Success = "true" },
+                            Output = BActionXml.GetInstance().GetPersonVO(req.Person)
+                        };
 
-                        step1.ResponseData = "";
+                        step1.ResponseData = JsonConvert.SerializeObject(personResult);
+
+                        ShowMessage("GetPersonInWeb模拟请求返回结果：" + step1.ResponseData);
+
                         BActionLog.GetInstance().Insert(step1);
-
-
-                        ComResultVO<PersonVO> personResult = new ComResultVO<PersonVO>();
-
+                                                                     
                         if (personResult.State.Equals("true"))
                         {
                             //费用分解
@@ -315,7 +306,7 @@ namespace HC.WinService
                             {
                                 SubmitId = submitLog.Id,
                                 Step = 2,
-                                ActionName = "Refundment",
+                                ActionName = "RefundmentInWeb",
                                 RequestData = BActionXml.GetInstance().GetRefundmentXml(req)
                             };
 

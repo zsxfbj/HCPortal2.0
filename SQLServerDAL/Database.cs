@@ -2864,8 +2864,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// �õ������еĴ洢���̲���������ܵõ�������true����out �������������ܵõ�����parms = null������false;
-        /// ���ߣ��϶���Wintle:)
+        /// 
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="spName"></param>
@@ -2894,8 +2893,7 @@ namespace HC.SQLServerDAL
         }
 
         /// <summary>
-        /// �õ������еĴ洢���̲���������ܵõ�������true����out �������������ܵõ�����parms = null������false;
-        /// ���ߣ��϶���Wintle:)
+        ///
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="spName"></param>

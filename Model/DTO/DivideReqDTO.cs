@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using HC.Model.VO;
-using HC.Utility.Converter;
+﻿using HC.Utility.Converter;
 using Newtonsoft.Json;
 
 namespace HC.Model.DTO
@@ -17,7 +15,7 @@ namespace HC.Model.DTO
         public PersonInfoReqDTO Person { get; set; }
 
         /// <summary>
-        /// 收费单据号
+        /// 收费单据号/HIS交易号
         /// </summary>
         [JsonProperty("feeNumber")]       
         public string FeeNumber { get; set; }
@@ -51,6 +49,12 @@ namespace HC.Model.DTO
         /// </summary>       
         [JsonProperty("sectionName")]
         public string SectionName { get; set; }
+
+        /// <summary>
+        /// HIS就诊科别名称
+        /// </summary>
+        [JsonProperty("hisSectionName")]
+        public string HisSectionName { get; set; }
 
         /// <summary>
         /// 医师编码，北京市卫生局标准15位，部队16位，严禁使用汉字。

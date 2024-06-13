@@ -11,11 +11,16 @@ namespace HC.Entity
         /// 自增Id
         /// </summary>
         public long Id { get; set; }
-           
+        
         /// <summary>
         /// 提交类型：1-费用分解；2-退费申请；3-查询交易状态
         /// </summary>
         public int SubmitType { get; set; }
+
+        /// <summary>
+        /// 请求业务Id
+        /// </summary>
+        public string RequestId { get; set; }
          
         /// <summary>
         /// 提交的内容
@@ -49,6 +54,7 @@ namespace HC.Entity
         {
             Id = 0;           
             SubmitType = 1;
+            RequestId = Guid.NewGuid().ToString();
             SubmitContent = "";
             ResultContent = "";
             Flag = 0;

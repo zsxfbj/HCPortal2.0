@@ -29,17 +29,11 @@ namespace HC.BLL
             sb.AppendLine("<card_no>" + personInfo.CardNumber + "</card_no>");
             sb.AppendLine("<id_no>" + personInfo.IdNumber + "</id_no>");
             sb.AppendLine("<personname>" + personInfo.PersonName + "</personname>");
-            sb.AppendLine("<sex>" + personInfo.Sex + "</sex>");
-            sb.AppendLine("<birthday>" + personInfo.Birthday + "</birthday>");
-            sb.AppendLine("<fundtype>" + personInfo.FundType + "</fundtype>");
-            if (personInfo.InHospital.HasValue)
-            {
-                sb.AppendLine("<hospflag>" + personInfo.InHospital + "</hospflag>");
-            }
-            else
-            {
-                sb.AppendLine("<hospflag>0</hospflag>");
-            }
+            int.TryParse(personInfo.IdNumber.Substring(16,1), out int sex);
+            sb.AppendLine("<sex>" + ((sex%2 == 1) ? "1" : "2") + "</sex>");
+            sb.AppendLine("<birthday>" + personInfo.IdNumber.Substring(6,8) + "</birthday>");
+            sb.AppendLine("<fundtype>91</fundtype>");
+            sb.AppendLine("<hospflag>0</hospflag>");
             sb.AppendLine("</input>");
             sb.Append(XmlEnd);
             return sb.ToString();
@@ -449,6 +443,34 @@ namespace HC.BLL
             return comResult;
         }
         #endregion public ComResultVO<TradeStateVO> GetTradeStateVO(string outXml)
+
+        #region public PersonVO GetPersonVO(PersonInfoReqDTO person)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
+        public PersonVO GetPersonVO(PersonInfoReqDTO person)
+        {
+
+            int.TryParse(person.IdNumber.Substring(16, 1), out int sex);
+            return new PersonVO
+            {
+                Birthday = person.IdNumber.Substring(6,8),
+                IdNumber = person.IdNumber,
+                CardNumber = person.CardNumber,
+                PersonName = person.PersonName,
+                PersonType = "",
+                FromHospitalDate = "18991230",
+                Sex = (sex%2 ==1) ? 1 : 2,
+                FundType = "91",
+                IcNumber = person.CardNumber,
+                IsSpecifiedHospital = "1",
+                IsChronicHospital = "false",
+                IsInRedList = "true"
+            };
+        }
+        #endregion public PersonVO GetPersonVO(PersonInfoReqDTO person)
 
         #region private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)
         private void GetBaseInfo<T>(XmlNode rootNode, ComResultVO<T> comResult)

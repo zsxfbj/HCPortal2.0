@@ -36,14 +36,14 @@ namespace HC.SQLServerDAL
             }
             else
             {
-                parms = new SqlParameter[3];
-                parms[0] = new SqlParameter(PARM_RESULT_CONTENT, System.Data.SqlDbType.NText);
+                parms = new SqlParameter[]{
+                    new SqlParameter(PARM_RESULT_CONTENT, SqlDbType.NText),
+                    new SqlParameter(PARM_FLAG, SqlDbType.Int),
+                    new SqlParameter(PARM_ID, SqlDbType.BigInt)
+
+                };
                 parms[0].Value = resultContent;
-
-                parms[1] = new SqlParameter(PARM_FLAG, System.Data.SqlDbType.Int);
-                parms[1].Value = flag;
-
-                parms[2] = new SqlParameter(PARM_ID, System.Data.SqlDbType.BigInt);
+                parms[1].Value  = flag;
                 parms[2].Value = id;
 
                 ParamsCache.CacheParameterSet(Database.CONN_STRING_NON_DTC, "SQL_UPDATE_SUBMIT_LOG", parms);
@@ -79,9 +79,9 @@ namespace HC.SQLServerDAL
                 {
                     SubmitLog entity = new SubmitLog
                     {
-                        Id = dr.IsDBNull(0) ? 0L : dr.GetInt64(0),
-                        ClientIp = dr.IsDBNull(1) ? "" : dr.GetString(1),
-                        SubmitType = dr.IsDBNull(2) ? 0 : dr.GetInt32(2),
+                        Id = dr.IsDBNull(0) ? 0L : dr.GetInt64(0),                      
+                        SubmitType = dr.IsDBNull(1) ? 0 : dr.GetInt32(1),
+                        RequestId = dr.IsDBNull(2) ? "" : dr.GetString(2),
                         SubmitContent = dr.IsDBNull(3) ? "" : dr.GetString(3),
                         ResultContent = dr.IsDBNull(4) ? "" : dr.GetString(4),
                         Flag = dr.IsDBNull(5) ? 0 : dr.GetInt32(5),
