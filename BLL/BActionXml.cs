@@ -331,15 +331,15 @@ namespace HC.BLL
         }
         #endregion public string GetRefundmentXml(RefundmentReqDTO req)
 
-        #region public ComResultVO<RefundTradeVO> GetRefundTradeVO(string outXml)
+        #region public ComResultVO<RefundTradeResultVO> GetRefundTradeVO(string outXml)
         /// <summary>
         /// 
         /// </summary>
         /// <param name="outXml"></param>
         /// <returns></returns>
-        public ComResultVO<RefundTradeVO> GetRefundTradeVO(string outXml)
+        public ComResultVO<RefundTradeResultVO> GetRefundTradeVO(string outXml)
         {
-            ComResultVO<RefundTradeVO> comResult = new ComResultVO<RefundTradeVO>();
+            ComResultVO<RefundTradeResultVO> comResult = new ComResultVO<RefundTradeResultVO>();
             XmlDocument document = new XmlDocument();
             document.LoadXml(outXml);
             //获取根节点
@@ -350,7 +350,7 @@ namespace HC.BLL
             XmlNode outputNode = rootNode.SelectSingleNode("output");
             if (outputNode != null)
             {
-                comResult.Output = new RefundTradeVO();
+                comResult.Output = new RefundTradeResultVO();
 
 
                 XmlNode fullTradeNode = outputNode.SelectSingleNode("fulltrade");
@@ -360,32 +360,29 @@ namespace HC.BLL
                     XmlNode tradeNode = outputNode.SelectSingleNode("tradeinfo");
                     if (tradeNode != null)
                     {
+                        comResult.Output.Trade = new RefundTradeVO();
                         //交易流水号
-                        comResult.Output.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
+                        comResult.Output.Trade.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
 
-                        //交易流水号
-                        comResult.Output.IllType = GetSubNodeValue(tradeNode, "illtype");
+                        //就诊方式
+                        comResult.Output.Trade.IllType = GetSubNodeValue(tradeNode, "illtype");
 
                         //医保应用号
-                        comResult.Output.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
+                        comResult.Output.Trade.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
 
                         //交易流水号
-                        comResult.Output.CureType = GetSubNodeValue(tradeNode, "curetype");
+                        comResult.Output.Trade.CureType = GetSubNodeValue(tradeNode, "curetype");
 
                         //交易日期
-                        comResult.Output.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
+                        comResult.Output.Trade.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
                     }
 
                     //费用明细
                     XmlNode feeItemsNode = outputNode.SelectSingleNode("feeitemarray");
                     if (feeItemsNode != null)
                     {
-                        comResult.Output.FeeItems = new System.Collections.Generic.List<FeeItemVO>();
-                        foreach (XmlNode feeItemNode in feeItemsNode.ChildNodes)
-                        {
-                            //添加到计费明细项
-                            comResult.Output.FeeItems.Add(GetFeeItemVO(feeItemNode));
-                        }
+                        comResult.Output.FeeItems = new FeeItemsVO();
+                        comResult.Output.FeeItems.FeeItem = GetFeeItemVO(feeItemsNode.ChildNodes.Item(0));                         
                     }
 
                     //汇总支付信息
@@ -402,9 +399,7 @@ namespace HC.BLL
                         comResult.Output.Payment = GetPayment(paymentNode);
                     }
                 }
-
             }
-
             return comResult;
         }
         #endregion public ComResultVO<RefundTradeVO> GetRefundTradeVO(string outXml)
@@ -428,8 +423,10 @@ namespace HC.BLL
             XmlNode outputNode = rootNode.SelectSingleNode("output");
             if (outputNode != null)
             {
-                comResult.Output = new TradeStateVO();
-                comResult.Output.State = GetSubNodeValue(outputNode, "tradestate");
+                comResult.Output = new TradeStateVO
+                {
+                    State = GetSubNodeValue(outputNode, "tradestate")
+                };
                 if (comResult.Output.State.Equals("ok", StringComparison.OrdinalIgnoreCase))
                 {
                     comResult.Output.StateName = "交易成功";

@@ -6,12 +6,7 @@ namespace HC.Model.VO
     /// 交易状态
     /// </summary>
     public class TradeStateVO
-    {
-        /// <summary>
-        /// 交易流水号
-        /// </summary>
-        [JsonProperty("tradeNumber")]
-        public string TradeNumber { get; set; }
+    { 
 
         /// <summary>
         /// 交易状态: ok-交易成功，cancel-交易撤销

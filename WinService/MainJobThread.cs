@@ -249,15 +249,16 @@ namespace HC.WinService
                             cd.Refundment_Web(step2.RequestData, out outXml);
 
                             LogHelper.WriteDealLogInfo("RefundmentInWeb返回结果：\r\n" + outXml);
+
                             ShowMessage("RefundmentInWeb返回结果：\r\n" + outXml);
 
-                            ComResultVO<RefundTradeVO> refundResult = BActionXml.GetInstance().GetRefundTradeVO(outXml);
+                            ComResultVO<RefundTradeResultVO> refundResult = BActionXml.GetInstance().GetRefundTradeVO(outXml);
 
                             step2.ResponseData = JsonConvert.SerializeObject(refundResult);
                             
                             BActionLog.GetInstance().Insert(step2);
 
-                          
+                                                      
                             if (refundResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
                             {
                                 //交易确认

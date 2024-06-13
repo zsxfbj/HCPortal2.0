@@ -50,6 +50,7 @@
     <Compile Include="VO\MedicineCatalogVO.cs" />
     <Compile Include="VO\PaymentVO.cs" />
     <Compile Include="VO\PersonVO.cs" />
+    <Compile Include="VO\RefundTradeResultVO.cs" />
     <Compile Include="VO\RefundTradeVO.cs" />
     <Compile Include="VO\StateVO.cs" />
     <Compile Include="VO\SummaryPayVO.cs" />
