@@ -38,7 +38,7 @@
   <ItemGroup>
     <Compile Include="DTO\DivideReqDTO.cs" />
     <Compile Include="DTO\FeeItemDTO.cs" />
-    <Compile Include="DTO\GetPersonInfoReqDTO.cs" />
+    <Compile Include="DTO\PersonInfoReqDTO.cs" />
     <Compile Include="DTO\RecipeDTO.cs" />
     <Compile Include="DTO\RefundmentReqDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

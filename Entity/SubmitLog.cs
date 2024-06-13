@@ -61,6 +61,5 @@ namespace HC.Entity
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;
         }
-
     }
 }
