@@ -260,8 +260,7 @@ namespace HC.WinService
                                     },
 
                                     Output = new TradeResultVO
-                                    {
-                                        CardNumber = req.Person.CardNumber,
+                                    {                                       
                                         PersonAccountAfterSubtractAmount = 0,
                                         Sign = "441C11F6CF574627BF6A7DF4B83FF539",
                                         CertId = "Algorithm"
@@ -398,8 +397,7 @@ namespace HC.WinService
                                     },
 
                                     Output = new TradeResultVO
-                                    {
-                                        CardNumber = req.Person.CardNumber,
+                                    {                                       
                                         PersonAccountAfterSubtractAmount = 0,
                                         Sign = "441C11F6CF574627BF6A7DF4B83FF539",
                                         CertId = "Algorithm"

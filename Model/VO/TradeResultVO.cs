@@ -7,13 +7,7 @@ namespace HC.Model.VO
     /// 门诊交易确认返回结果
     /// </summary>
     public class TradeResultVO
-    {
-        /// <summary>
-        /// 社保卡号
-        /// </summary>
-        [JsonProperty("cardNumber")]
-        public string CardNumber { get; set; }
-
+    { 
         /// <summary>
         /// 本次结算后个人帐户余额，精确到小数点2位
         /// </summary>
