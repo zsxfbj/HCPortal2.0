@@ -36,7 +36,7 @@ namespace HC.Model.DTO
         /// 处方时间，格式为yyyyMMddHHmmss
         /// </summary>      
         [JsonProperty("recipeDate")]
-        public int RecipeDate { get; set; }
+        public string RecipeDate { get; set; }
 
         /// <summary>
         /// 就诊科别代码

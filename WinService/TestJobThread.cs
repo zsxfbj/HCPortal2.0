@@ -7,6 +7,7 @@ using HC.Model.VO;
 using HC.Utitily;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Text;
 
 namespace HC.WinService
 {
@@ -109,7 +110,7 @@ namespace HC.WinService
 
                         ActionLog step1 = new ActionLog
                         {
-                            SubmitId = submitLog.Id,
+                            RequestId = submitLog.RequestId,
                             Step = 1,
                             ActionName = "GetPersonInWeb",
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
@@ -126,153 +127,163 @@ namespace HC.WinService
 
                         BActionLog.GetInstance().Insert(step1);
 
-                        if (personResult.State.Equals("true"))
+                        //费用分解
+                        ActionLog step2 = new ActionLog
                         {
-                            //费用分解
-                            ActionLog step2 = new ActionLog
-                            {
-                                SubmitId = submitLog.Id,
-                                Step = 2,
-                                ActionName = "DivideInWeb",
-                                RequestData = BActionXml.GetInstance().GetDivideFeeXml(req)
-                            };
+                            RequestId = submitLog.RequestId,
+                            Step = 2,
+                            ActionName = "DivideInWeb",
+                            RequestData = BActionXml.GetInstance().GetDivideFeeXml(req)
+                        };
 
-                            ComResultVO<TradeDivideVO> tradeResult = new ComResultVO<TradeDivideVO>
+                        ComResultVO<TradeDivideVO> tradeResult = new ComResultVO<TradeDivideVO>
+                        {
+                            State = new StateVO
                             {
-                                State = new StateVO
+                                Success = "true"
+                            },
+                            Output = new TradeDivideVO
+                            {
+                                Trade = new TradeVO
                                 {
-                                    Success = "true"
+                                    TradeNumber = IdHelper.IdWorker.NextId().ToString(),
+                                    TradeDate = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                                    FeeNumber = req.FeeNumber
                                 },
-                                Output = new TradeDivideVO
-                                {
-                                    Trade = new TradeVO
-                                    {
-                                        TradeNumber = IdHelper.IdWorker.NextId().ToString(),
-                                        TradeDate = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                                        FeeNumber = req.FeeNumber
-                                    },
 
-                                    SummaryPay = new SummaryPayVO
+                                SummaryPay = new SummaryPayVO
+                                {
+                                    TotalAmount = req.Fee,
+                                    PersonAccountAmount = 0,
+                                    CashAmount = req.Fee == 50 ? 10 : req.Fee,
+                                    FundAmount = req.Fee == 50 ? 40 : 0
+                                },
+                                Payment = new PaymentVO
+                                {
+                                    SelfPayAmount = req.Fee == 50 ? 10 : req.Fee,
+                                    SupplementaryPayAmount = 0,
+                                    BigPayAmount = req.Fee == 50 ? 40 : 0,
+                                    FirstPayAmount = 0,
+                                    TotalAmount = req.Fee,
+                                    MilitaryPayAmount = 0,
+                                    SelfBigPayAmount = 0,
+                                    InInsuranceAmount = req.Fee == 50 ? 40 : 0,
+                                    OutInsuranceAmount = req.Fee == 50 ? 10 : req.Fee,
+                                    OutOfBigPayAmount = 0
+                                },
+                                MedicineCatalog = new MedicineCatalogVO
+                                {
+                                    BloodTransfusionFee = 0,
+                                    ChineseHerbalDrinkFee = 0,
+                                    ChineseMedicineFee = 0,
+                                    CtFee = 0,
+                                    ExamineFee = 0,
+                                    ForensicExpertiseFee = 0,
+                                    LabExamFee = 0,
+                                    MaterialFee = 0,
+                                    MedicineFee = 0,
+                                    MriFee = 0,
+                                    OperationFee = 0,
+                                    OrthodonticsFee = 0,
+                                    OtherFee = 0,
+                                    OxygenFee = 0,
+                                    ProsthesisFee = 0,
+                                    TreatmentFee = 0,
+                                    UltrasonicFee = 0,
+                                    XRayFee = 0
+                                },
+                                MedicineCatalog2 = new MedicineCatalog2VO
+                                {
+                                    ExamineFee = 0,
+                                    DiagnosisFee = 0,
+                                    CommonServiceFee = 0,
+                                    ChineseHerbalDrinkFee = 0,
+                                    ChineseMedicineFee = 0,
+                                    TreatmentFee = 0,
+                                    LabExamFee = 0,
+                                    MaterialFee = 0,
+                                    MedicineFee = 0,
+                                    MedicalServiceFee = 0,
+                                    OperationFee = 0,
+                                    OtherOperationFee = 0,
+                                    RegistFee = 0
+                                },
+                                FeeItems = new FeeItemsVO
+                                {
+                                    FeeItem = new FeeItemVO
                                     {
-                                        TotalAmount = req.Fee,
-                                        PersonAccountAmount = 0,
-                                        CashAmount = req.Fee == 50 ? 10 : req.Fee,
-                                        FundAmount = req.Fee == 50 ? 40 : 0
-                                    },
-                                    Payment = new PaymentVO
-                                    {
-                                        SelfPayAmount = req.Fee == 50 ? 10 : req.Fee,
-                                        SupplementaryPayAmount = 0,
-                                        BigPayAmount = req.Fee == 50 ? 40 : 0,
-                                        FirstPayAmount = 0,
-                                        TotalAmount = req.Fee,
-                                        MilitaryPayAmount = 0,
-                                        SelfBigPayAmount = 0,
-                                        InInsuranceAmount = req.Fee == 50 ? 40 : 0,
-                                        OutInsuranceAmount = req.Fee == 50 ? 10 : req.Fee,
-                                        OutOfBigPayAmount = 0
-                                    },
-                                    MedicineCatalog = new MedicineCatalogVO
-                                    {
-                                        BloodTransfusionFee = 0,
-                                        ChineseHerbalDrinkFee = 0,
-                                        ChineseMedicineFee = 0,
-                                        CtFee = 0,
-                                        ExamineFee = 0,
-                                        ForensicExpertiseFee = 0,
-                                        LabExamFee = 0,
-                                        MaterialFee = 0,
-                                        MedicineFee = 0,
-                                        MriFee = 0,
-                                        OperationFee = 0,
-                                        OrthodonticsFee = 0,
-                                        OtherFee = 0,
-                                        OxygenFee = 0,
-                                        ProsthesisFee = 0,
-                                        TreatmentFee = 0,
-                                        UltrasonicFee = 0,
-                                        XRayFee = 0
-                                    },
-                                    MedicineCatalog2 = new MedicineCatalog2VO
-                                    {
-                                        ExamineFee = 0,
-                                        DiagnosisFee = 0,
-                                        CommonServiceFee = 0,
-                                        ChineseHerbalDrinkFee = 0,
-                                        ChineseMedicineFee = 0,
-                                        TreatmentFee = 0,
-                                        LabExamFee = 0,
-                                        MaterialFee = 0,
-                                        MedicineFee = 0,
-                                        MedicalServiceFee = 0,
-                                        OperationFee = 0,
-                                        OtherOperationFee = 0,
-                                        RegistFee = 0
-                                    },
-                                    FeeItems = new FeeItemsVO
-                                    {
-                                        FeeItem = new FeeItemVO
-                                        {
-                                            Count = 1,
-                                            Fee = req.Fee,
-                                            FeeType = "0601",
-                                            HisCode = req.HisCode,
-                                            InInsuranceFee = req.Fee == 50 ? 40 : 0,
-                                            ItemCode = "w0101020010",
-                                            ItemName = "医事服务费【三级医院】【普通门诊】",
-                                            ItemNumber = 1,
-                                            ItemType = 2,
-                                            RecipeNumber = "1",
-                                            OutInsuranceFee = req.Fee == 50 ? 10 : req.Fee,
-                                            PreferentialFee = 0,
-                                            PreferentialScale = 0,
-                                            SelfPayFee = req.Fee == 50 ? 10 : req.Fee,
-                                            State = req.Fee == 50 ? 0 : 6,
-                                            UnitPrice = req.Fee
-                                        }
+                                        Count = 1,
+                                        Fee = req.Fee,
+                                        FeeType = "0601",
+                                        HisCode = req.HisCode,
+                                        InInsuranceFee = req.Fee == 50 ? 40 : 0,
+                                        ItemCode = "w0101020010",
+                                        ItemName = "医事服务费【三级医院】【普通门诊】",
+                                        ItemNumber = 1,
+                                        ItemType = 2,
+                                        RecipeNumber = "1",
+                                        OutInsuranceFee = req.Fee == 50 ? 10 : req.Fee,
+                                        PreferentialFee = 0,
+                                        PreferentialScale = 0,
+                                        SelfPayFee = req.Fee == 50 ? 10 : req.Fee,
+                                        State = req.Fee == 50 ? 0 : 6,
+                                        UnitPrice = req.Fee
                                     }
                                 }
-                            };
-
-
-                            step2.ResponseData = JsonConvert.SerializeObject(tradeResult);
-                            ShowMessage("DivideInWeb模拟请求返回结果：" + step2.ResponseData);                            
-
-                            BActionLog.GetInstance().Insert(step2);
-
-                            BSubmitLog.GetInstance().Update(step2.ResponseData, 1, submitLog.Id);
-
-                            if (tradeResult.State.Equals("true"))
-                            {
-                                //交易确认
-                                ActionLog step3 = new ActionLog
-                                {
-                                    SubmitId = submitLog.Id,
-                                    Step = 3,
-                                    ActionName = "TradeInWeb"
-                                };
-
-                                ComResultVO<TradeResultVO> comResultVO = new ComResultVO<TradeResultVO>
-                                {
-                                    State = new StateVO
-                                    {
-                                        Success = "true"
-                                    },
-
-                                    Output = new TradeResultVO
-                                    {                                       
-                                        PersonAccountAfterSubtractAmount = 0,
-                                        Sign = "441C11F6CF574627BF6A7DF4B83FF539",
-                                        CertId = "Algorithm"
-                                    }
-                                };
-
-                                step3.ResponseData = JsonConvert.SerializeObject(comResultVO);
-                                ShowMessage("TradeInWeb模拟请求返回结果：" + step3.ResponseData);
-                                                                    
-                                BActionLog.GetInstance().Insert(step3);
                             }
-                        }  
+                        };
+
+
+                        step2.ResponseData = JsonConvert.SerializeObject(tradeResult);
+                        ShowMessage("DivideInWeb模拟请求返回结果：" + step2.ResponseData);
+
+                        BActionLog.GetInstance().Insert(step2);
+
+                        ApiResultVO apiResult = new ApiResultVO
+                        {
+                            Success = "true",
+                            ErrorMessage = "",
+                            TradeNumber = tradeResult.Output.Trade.TradeNumber,
+                            TotalAmount = tradeResult.Output.SummaryPay.TotalAmount.ToString("#0.####"),
+                            InInsuranceAmount = tradeResult.Output.SummaryPay.FundAmount.ToString("#0.####")
+                        };
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<![CDATA[");
+                        sb.Append(step2.ResponseData);
+                        sb.Append("]]>");
+                        apiResult.Result = Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+
+                        BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(apiResult), 1, submitLog.RequestId);
+
+                        //交易确认
+                        ActionLog step3 = new ActionLog
+                        {
+                            RequestId = submitLog.RequestId,
+                            Step = 3,
+                            RequestData = "",
+                            ActionName = "TradeInWeb"
+                        };
+
+                        ComResultVO<TradeResultVO> comResultVO = new ComResultVO<TradeResultVO>
+                        {
+                            State = new StateVO
+                            {
+                                Success = "true"
+                            },
+
+                            Output = new TradeResultVO
+                            {
+                                PersonAccountAfterSubtractAmount = 0,
+                                Sign = "441C11F6CF574627BF6A7DF4B83FF539",
+                                CertId = "Algorithm"
+                            }
+                        };
+
+                        step3.ResponseData = JsonConvert.SerializeObject(comResultVO);
+                        ShowMessage("TradeInWeb模拟请求返回结果：" + step3.ResponseData);
+
+                        BActionLog.GetInstance().Insert(step3);                         
                        
                     }
                     else if (submitLog.SubmitType == 2) //退费请求
@@ -281,7 +292,7 @@ namespace HC.WinService
 
                         ActionLog step1 = new ActionLog
                         {
-                            SubmitId = submitLog.Id,
+                            RequestId = submitLog.RequestId,
                             Step = 1,
                             ActionName = "GetPersonInWeb",
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person)
@@ -297,126 +308,134 @@ namespace HC.WinService
                         ShowMessage("GetPersonInWeb模拟请求返回结果：" + step1.ResponseData);
 
                         BActionLog.GetInstance().Insert(step1);
-                                                                     
-                        if (personResult.State.Equals("true"))
+
+                        //费用分解
+                        ActionLog step2 = new ActionLog
                         {
-                            //费用分解
-                            ActionLog step2 = new ActionLog
-                            {
-                                SubmitId = submitLog.Id,
-                                Step = 2,
-                                ActionName = "RefundmentInWeb",
-                                RequestData = BActionXml.GetInstance().GetRefundmentXml(req)
-                            };
+                            RequestId = submitLog.RequestId,
+                            Step = 2,
+                            ActionName = "RefundmentInWeb",
+                            RequestData = BActionXml.GetInstance().GetRefundmentXml(req)
+                        };
 
-                            ComResultVO<RefundTradeResultVO> refundResult = new ComResultVO<RefundTradeResultVO>()
+                        ComResultVO<RefundTradeResultVO> refundResult = new ComResultVO<RefundTradeResultVO>()
+                        {
+                            State = new StateVO
                             {
-                                State = new StateVO
+                                Success = "true"
+                            },
+                            Output = new RefundTradeResultVO
+                            {
+                                Trade = new RefundTradeVO
                                 {
-                                    Success = "true"
+                                    TradeNumber = IdHelper.IdWorker.NextId().ToString(),
+                                    TradeDate = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                                    CureType = "17",
+                                    IcNumber = "13021369000S",
+                                    IllType = "0"
                                 },
-                                Output = new RefundTradeResultVO
-                                {
-                                    Trade = new RefundTradeVO
-                                    {
-                                        TradeNumber = IdHelper.IdWorker.NextId().ToString(),
-                                        TradeDate = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                                         CureType = "17",
-                                         IcNumber = "13021369000S",
-                                         IllType = "0"
-                                    },
 
-                                    SummaryPay = new SummaryPayVO
+                                SummaryPay = new SummaryPayVO
+                                {
+                                    TotalAmount = -50,
+                                    PersonAccountAmount = 0,
+                                    CashAmount = -10,
+                                    FundAmount = -40
+                                },
+                                Payment = new PaymentVO
+                                {
+                                    SelfPayAmount = -10,
+                                    SupplementaryPayAmount = 0,
+                                    BigPayAmount = -40,
+                                    FirstPayAmount = 0,
+                                    TotalAmount = -50,
+                                    MilitaryPayAmount = 0,
+                                    SelfBigPayAmount = 0,
+                                    InInsuranceAmount = -40,
+                                    OutInsuranceAmount = -10,
+                                    OutOfBigPayAmount = 0
+                                },
+
+                                FeeItems = new FeeItemsVO
+                                {
+                                    FeeItem = new FeeItemVO
                                     {
-                                        TotalAmount = -50,
-                                        PersonAccountAmount = 0,
-                                        CashAmount = -10,
-                                        FundAmount = -40
-                                    },
-                                    Payment = new PaymentVO
-                                    {
-                                        SelfPayAmount = -10,
-                                        SupplementaryPayAmount = 0,
-                                        BigPayAmount = -40,
-                                        FirstPayAmount = 0,
-                                        TotalAmount = -50,
-                                        MilitaryPayAmount = 0,
-                                        SelfBigPayAmount = 0,
-                                        InInsuranceAmount = -40,
-                                        OutInsuranceAmount = -10,
-                                        OutOfBigPayAmount = 0
-                                    },
-                                    
-                                    FeeItems = new FeeItemsVO
-                                    {
-                                        FeeItem = new FeeItemVO
-                                        {
-                                            Count = 1,
-                                            Fee = -50,
-                                            FeeType = "0601",
-                                            HisCode = "w0101020010",
-                                            InInsuranceFee = -40,
-                                            ItemCode = "w0101020010",
-                                            ItemName = "医事服务费【三级医院】【普通门诊】",
-                                            ItemNumber = 1,
-                                            ItemType = 2,
-                                            RecipeNumber = "1",
-                                            OutInsuranceFee = -10,
-                                            PreferentialFee = 0,
-                                            PreferentialScale = 0,
-                                            SelfPayFee = -10,
-                                            State = 0,
-                                            UnitPrice = -50
-                                        }
+                                        Count = 1,
+                                        Fee = -50,
+                                        FeeType = "0601",
+                                        HisCode = "w0101020010",
+                                        InInsuranceFee = -40,
+                                        ItemCode = "w0101020010",
+                                        ItemName = "医事服务费【三级医院】【普通门诊】",
+                                        ItemNumber = 1,
+                                        ItemType = 2,
+                                        RecipeNumber = "1",
+                                        OutInsuranceFee = -10,
+                                        PreferentialFee = 0,
+                                        PreferentialScale = 0,
+                                        SelfPayFee = -10,
+                                        State = 0,
+                                        UnitPrice = -50
                                     }
                                 }
-                            };
-
-                            step2.ResponseData = JsonConvert.SerializeObject(refundResult);
-                            ShowMessage("RefundmentInWeb模拟请求返回结果：" + step2.ResponseData);
-
-                            BActionLog.GetInstance().Insert(step2);
-
-                            BSubmitLog.GetInstance().Update(step2.ResponseData, 1, submitLog.Id);
-
-                            if (refundResult.State.Equals("true"))
-                            {
-                                //交易确认
-                                ActionLog step3 = new ActionLog
-                                {
-                                    SubmitId = submitLog.Id,
-                                    Step = 3,
-                                    ActionName = "TradeInWeb"
-                                };
-
-                                ComResultVO<TradeResultVO> comResultVO = new ComResultVO<TradeResultVO>
-                                {
-                                    State = new StateVO
-                                    {
-                                        Success = "true"
-                                    },
-
-                                    Output = new TradeResultVO
-                                    {                                       
-                                        PersonAccountAfterSubtractAmount = 0,
-                                        Sign = "441C11F6CF574627BF6A7DF4B83FF539",
-                                        CertId = "Algorithm"
-                                    }
-                                };
-
-                                step3.ResponseData = JsonConvert.SerializeObject(comResultVO);
-                                ShowMessage("TradeInWeb模拟请求返回结果：" + step3.ResponseData);
-
-                                BActionLog.GetInstance().Insert(step3);
                             }
-                        }
-                     
+                        };
+
+                        step2.ResponseData = JsonConvert.SerializeObject(refundResult);
+                        ShowMessage("RefundmentInWeb模拟请求返回结果：" + step2.ResponseData);
+
+                        BActionLog.GetInstance().Insert(step2);
+
+                        ApiResultVO apiResult = new ApiResultVO
+                        {
+                            Success = "true",
+                            ErrorMessage = "",
+                            TradeNumber = refundResult.Output.Trade.TradeNumber,
+                            TotalAmount = refundResult.Output.SummaryPay.TotalAmount.ToString("#0.####"),
+                            InInsuranceAmount = refundResult.Output.SummaryPay.FundAmount.ToString("#0.####")
+                        };
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<![CDATA[");
+                        sb.Append(step2.ResponseData);
+                        sb.Append("]]>");
+                        apiResult.Result = Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+
+                        BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(apiResult), 1, submitLog.RequestId);
+
+                        //交易确认
+                        ActionLog step3 = new ActionLog
+                        {
+                            RequestId = submitLog.RequestId,
+                            Step = 3,
+                            ActionName = "TradeInWeb"
+                        };
+
+                        ComResultVO<TradeResultVO> comResultVO = new ComResultVO<TradeResultVO>
+                        {
+                            State = new StateVO
+                            {
+                                Success = "true"
+                            },
+
+                            Output = new TradeResultVO
+                            {
+                                PersonAccountAfterSubtractAmount = 0,
+                                Sign = "441C11F6CF574627BF6A7DF4B83FF539",
+                                CertId = "Algorithm"
+                            }
+                        };
+
+                        step3.ResponseData = JsonConvert.SerializeObject(comResultVO);
+                        ShowMessage("TradeInWeb模拟请求返回结果：" + step3.ResponseData);
+
+                        BActionLog.GetInstance().Insert(step3);                    
                     }
                     else
                     {
                         ActionLog step1 = new ActionLog
                         {
-                            SubmitId = submitLog.Id,
+                            RequestId = submitLog.RequestId,
                             Step = 1,
                             ActionName = "GetTradeStateInWeb",
                             RequestData = submitLog.SubmitContent
@@ -436,7 +455,7 @@ namespace HC.WinService
 
                         ShowMessage("GetTradeStateInWeb模拟请求返回结果：" + step1.ResponseData);
 
-                        BSubmitLog.GetInstance().Update(step1.ResponseData, 1, submitLog.Id);
+                        BSubmitLog.GetInstance().Update(step1.ResponseData, 1, submitLog.RequestId);
 
                     }
 

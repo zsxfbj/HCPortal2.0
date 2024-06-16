@@ -9,9 +9,9 @@ namespace HC.SQLServerDAL
     /// </summary>
     public class ActionLogDAL
     {
-        private const string SQL_INSERT_ACTION_LOG = "INSERT INTO [ActionLog] ([SubmitId],[Step],[ActionName],[RequestData],[ResponseData],[CreateTime]) VALUES ( @SubmitId, @Step, @ActionName,@RequestData, @ResponseData,GETDATE())";
+        private const string SQL_INSERT_ACTION_LOG = "INSERT INTO [ActionLog] ([RequestId],[Step],[ActionName],[RequestData],[ResponseData],[CreateTime]) VALUES ( @RequestId, @Step, @ActionName,@RequestData, @ResponseData,GETDATE())";
 
-        private const string PARM_SUBMIT_ID = "@SubmitId";
+        private const string PARM_REQUEST_ID = "@RequestId";
 
         private const string PARM_STEP = "@Step";
 
@@ -31,13 +31,13 @@ namespace HC.SQLServerDAL
             SqlParameter[] parms;
             if(ParamsCache.GetCachedParameterSet(Database.CONN_STRING_NON_DTC, "SQL_INSERT_ACTION_LOG", out parms))
             {
-                Database.AssignParameterValues(parms, entity.SubmitId, entity.Step, entity.ActionName, entity.RequestData, entity.ResponseData);
+                Database.AssignParameterValues(parms, entity.RequestId, entity.Step, entity.ActionName, entity.RequestData, entity.ResponseData);
             }
             else
             {
                 parms = new SqlParameter[5];
-                parms[0] = new SqlParameter(PARM_SUBMIT_ID, System.Data.SqlDbType.BigInt);
-                parms[0].Value = entity.SubmitId;
+                parms[0] = new SqlParameter(PARM_REQUEST_ID, System.Data.SqlDbType.VarChar,128);
+                parms[0].Value = entity.RequestId;
 
                 parms[1] = new SqlParameter(PARM_STEP, System.Data.SqlDbType.Int);
                 parms[1].Value = entity.Step;

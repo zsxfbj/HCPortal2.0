@@ -26,10 +26,10 @@ namespace HC.BLL.HC
         /// </summary>
         /// <param name="resultContent"></param>
         /// <param name="flag"></param>
-        /// <param name="id"></param>
-        public void Update(string resultContent, int flag, long id)
+        /// <param name="requestId"></param>
+        public void Update(string resultContent, int flag, string requestId)
         {
-            dal.Update(resultContent, flag, id);
+            dal.Update(resultContent, flag, requestId);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using HC.BLL;
 using HC.BLL.HC;
@@ -104,7 +105,7 @@ namespace HC.WinService
 
                         ActionLog step1 = new ActionLog
                         {
-                            SubmitId = submitLog.Id,
+                            RequestId = submitLog.RequestId,
                             Step = 1,
                             ActionName = "GetPersonInWeb",
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person),
@@ -116,7 +117,21 @@ namespace HC.WinService
 
                         ShowMessage("GetPersonInWeb请求：\r\n" + step1.RequestData);
 
-                        cd.GetPersonInfo_Web(step1.RequestData, out string outXml);
+                        string outXml;
+                        try
+                        {
+                            cd.GetPersonInfo_Web(step1.RequestData, out outXml);
+                        }
+                        catch (Exception ex) 
+                        {
+                            LogHelper.WriteErrorLogInfo("GetPersonInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+                                              
 
                         LogHelper.WriteDealLogInfo("GetPersonInWeb返回结果：\r\n" + outXml);
 
@@ -127,81 +142,122 @@ namespace HC.WinService
 
                         //保存操作数据                        
                         BActionLog.GetInstance().Insert(step1);
-                   
-                        if (personResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
+
+                        if (personResult.State.Success.Equals("false", StringComparison.OrdinalIgnoreCase))
                         {
-                            //费用分解
-                            ActionLog step2 = new ActionLog
-                            {
-                                SubmitId = submitLog.Id,
-                                Step = 2,
-                                ActionName = "DivideInWeb",
-                                RequestData = BActionXml.GetInstance().GetDivideFeeXml(req),
-                                CreateTime = DateTime.Now
-                            };
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = personResult.State.Error.Message;
 
-                            LogHelper.WriteDealLogInfo("DivideInWeb请求：\r\n" + step2.RequestData);
-                            ShowMessage("DivideInWeb请求：\r\n" + step2.RequestData);
-
-                            cd.Divide_Web(step2.RequestData, out outXml);
-
-                            LogHelper.WriteDealLogInfo("DivideInWeb返回结果：\r\n" + outXml);
-                            ShowMessage("DivideInWeb返回结果：\r\n" + outXml);
-
-                            ComResultVO<TradeDivideVO> tradeDivideResult = BActionXml.GetInstance().GetTradeVO(outXml);
-                            step2.ResponseData = JsonConvert.SerializeObject(tradeDivideResult);
-                            //保存操作数据                                                        
-                            BActionLog.GetInstance().Insert(step2);
-                                                       
-                            if (tradeDivideResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
-                            {                   
-                                //请求医保接口
-                                cd.Trade_Web(out outXml);
-
-                                LogHelper.WriteDealLogInfo("TradeInWeb返回结果：\r\n" + outXml);
-                                ShowMessage("TradeInWeb返回结果：\r\n" + outXml);
-
-                                ComResultVO<TradeResultVO> tradeResult = BActionXml.GetInstance().GetTradeResultVO(outXml);
-
-                                //交易确认
-                                ActionLog step3 = new ActionLog
-                                {
-                                    SubmitId = submitLog.Id,
-                                    Step = 3,
-                                    ActionName = "TradeInWeb",
-                                    RequestData = "",
-                                    ResponseData = JsonConvert.SerializeObject(tradeResult),
-                                    CreateTime = DateTime.Now
-                                };                                
-                                BActionLog.GetInstance().Insert(step3);
-
-                                if(tradeResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    //更新返回结果
-                                    BSubmitLog.GetInstance().Update(step2.ResponseData, 1, submitLog.Id);
-                                    return;
-                                }
-
-                                //更新返回结果
-                                if (tradeResult.State.Error != null)
-                                {
-                                    BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(tradeResult.State.Error), 2, submitLog.Id);
-                                    return;
-                                }
-                            }
-                            //更新返回结果
-                            if (tradeDivideResult.State.Error != null)
-                            {
-                                BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(tradeDivideResult.State.Error), 2, submitLog.Id);
-                                return;
-                            }
-                        }
-                        //更新返回结果
-                        if (personResult.State.Error != null)
-                        {
-                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(personResult.State.Error), 2, submitLog.Id);
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
                             return;
                         }
+                        //费用分解
+                        ActionLog step2 = new ActionLog
+                        {
+                            RequestId = submitLog.RequestId,
+                            Step = 2,
+                            ActionName = "DivideInWeb",
+                            RequestData = BActionXml.GetInstance().GetDivideFeeXml(req),
+                            CreateTime = DateTime.Now
+                        };
+
+                        LogHelper.WriteDealLogInfo("DivideInWeb请求：\r\n" + step2.RequestData);
+                        ShowMessage("DivideInWeb请求：\r\n" + step2.RequestData);
+
+                        try
+                        {
+                            cd.Divide_Web(step2.RequestData, out outXml);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteErrorLogInfo("DivideInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+
+
+                        LogHelper.WriteDealLogInfo("DivideInWeb返回结果：\r\n" + outXml);
+                        ShowMessage("DivideInWeb返回结果：\r\n" + outXml);
+
+                        ComResultVO<TradeDivideVO> tradeDivideResult = BActionXml.GetInstance().GetTradeVO(outXml);
+                        step2.ResponseData = JsonConvert.SerializeObject(tradeDivideResult);
+                        //保存操作数据                                                        
+                        BActionLog.GetInstance().Insert(step2);
+
+                        if (tradeDivideResult.State.Success.Equals("false", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = tradeDivideResult.State.Error.Message;
+
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+
+                        //确认分解交易
+                        try
+                        {
+                            cd.Trade_Web(out outXml);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteErrorLogInfo("TradeInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+                      
+
+                        LogHelper.WriteDealLogInfo("TradeInWeb返回结果：\r\n" + outXml);
+                        ShowMessage("TradeInWeb返回结果：\r\n" + outXml);
+
+                        ComResultVO<TradeResultVO> tradeResult = BActionXml.GetInstance().GetTradeResultVO(outXml);
+
+                        //交易确认
+                        ActionLog step3 = new ActionLog
+                        {
+                            RequestId = submitLog.RequestId,
+                            Step = 3,
+                            ActionName = "TradeInWeb",
+                            RequestData = "",
+                            ResponseData = JsonConvert.SerializeObject(tradeResult),
+                            CreateTime = DateTime.Now
+                        };
+                        BActionLog.GetInstance().Insert(step3);
+
+                        if (!tradeResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = tradeDivideResult.State.Error.Message;
+
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+                        //更新返回结果
+                        ApiResultVO apiResult = new ApiResultVO
+                        {
+                            Success = "true",
+                            ErrorMessage = "",
+                            TradeNumber = tradeDivideResult.Output.Trade.TradeNumber,
+                            TotalAmount = tradeDivideResult.Output.SummaryPay.TotalAmount.ToString("#0.####"),
+                            InInsuranceAmount = tradeDivideResult.Output.SummaryPay.FundAmount.ToString("#0.####")
+                        };
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<![CDATA[");
+                        sb.Append(step2.ResponseData);
+                        sb.Append("]]>");
+                        apiResult.Result = Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+
+                        BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(apiResult), 1, submitLog.RequestId);
+                        return;                       
                     }
                     else if(submitLog.SubmitType == 2)
                     {
@@ -209,7 +265,7 @@ namespace HC.WinService
 
                         ActionLog step1 = new ActionLog
                         {
-                            SubmitId = submitLog.Id,
+                            RequestId = submitLog.RequestId,
                             Step = 1,
                             ActionName = "GetPersonInWeb",
                             RequestData = BActionXml.GetInstance().GetPersonWebXml(req.Person),
@@ -219,11 +275,23 @@ namespace HC.WinService
                         LogHelper.WriteDealLogInfo("GetPersonInWeb请求：\r\n" + step1.RequestData);
                         ShowMessage("GetPersonInWeb请求：\r\n" + step1.RequestData);
 
-                        cd.GetPersonInfo_Web(step1.RequestData, out string outXml);
+                        string outXml;
+                        try
+                        {
+                            cd.GetPersonInfo_Web(step1.RequestData, out outXml);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteErrorLogInfo("GetPersonInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
 
                         LogHelper.WriteDealLogInfo("GetPersonInWeb返回结果：\r\n" + outXml);
                         ShowMessage("GetPersonInWeb返回结果：\r\n" + outXml);
-
 
                         ComResultVO<PersonVO> personResult = BActionXml.GetInstance().GetPersonVO(outXml);
                         step1.ResponseData = JsonConvert.SerializeObject(personResult);
@@ -231,83 +299,170 @@ namespace HC.WinService
                         //入库
                         BActionLog.GetInstance().Insert(step1);
 
-                        if (personResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
+
+                        if (!personResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
-                            //费用分解
-                            ActionLog step2 = new ActionLog
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = personResult.State.Error.Message;
+
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+
+
+                        //费用分解
+                        ActionLog step2 = new ActionLog
+                        {
+                            RequestId = submitLog.RequestId,
+                            Step = 2,
+                            ActionName = "RefundmentInWeb",
+                            RequestData = BActionXml.GetInstance().GetRefundmentXml(req),
+                            CreateTime = DateTime.Now
+                        };
+
+                        LogHelper.WriteDealLogInfo("RefundmentInWeb请求：\r\n" + step2.RequestData);
+                        ShowMessage("RefundmentInWeb请求：\r\n" + step2.RequestData);
+
+
+                        try
+                        {
+                            cd.Refundment_Web(step2.RequestData, out outXml);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteErrorLogInfo("RefundmentInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+
+
+                        LogHelper.WriteDealLogInfo("RefundmentInWeb返回结果：\r\n" + outXml);
+
+                        ShowMessage("RefundmentInWeb返回结果：\r\n" + outXml);
+
+                        ComResultVO<RefundTradeResultVO> refundResult = BActionXml.GetInstance().GetRefundTradeVO(outXml);
+
+                        step2.ResponseData = JsonConvert.SerializeObject(refundResult);
+
+                        BActionLog.GetInstance().Insert(step2);
+
+                        if (!refundResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ApiResultVO errorResult = new ApiResultVO
                             {
-                                SubmitId = submitLog.Id,
-                                Step = 2,
-                                ActionName = "RefundmentInWeb",
-                                RequestData = BActionXml.GetInstance().GetRefundmentXml(req),
-                                CreateTime = DateTime.Now
+                                Success = "false",
+                                ErrorMessage = refundResult.State.Error.Message
                             };
 
-                            LogHelper.WriteDealLogInfo("RefundmentInWeb请求：\r\n" + step2.RequestData);
-                            ShowMessage("RefundmentInWeb请求：\r\n" + step2.RequestData);
-
-                            cd.Refundment_Web(step2.RequestData, out outXml);
-
-                            LogHelper.WriteDealLogInfo("RefundmentInWeb返回结果：\r\n" + outXml);
-
-                            ShowMessage("RefundmentInWeb返回结果：\r\n" + outXml);
-
-                            ComResultVO<RefundTradeResultVO> refundResult = BActionXml.GetInstance().GetRefundTradeVO(outXml);
-
-                            step2.ResponseData = JsonConvert.SerializeObject(refundResult);
-                            
-                            BActionLog.GetInstance().Insert(step2);
-
-                                                      
-                            if (refundResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase))
-                            {
-                                //交易确认
-                                ActionLog step3 = new ActionLog
-                                {
-                                    SubmitId = submitLog.Id,
-                                    Step = 3,
-                                    ActionName = "TradeInWeb",
-                                    RequestData = "",
-                                    CreateTime = DateTime.Now
-                                };
-
-
-                                cd.Trade_Web(out outXml);
-                                LogHelper.WriteDealLogInfo("TradeInWeb返回结果：\r\n" + outXml);
-                                ShowMessage("TradeInWeb返回结果：\r\n" + outXml);
-
-
-                                step3.ResponseData = outXml;
-                                BActionLog.GetInstance().Insert(step3);
-
-                                BSubmitLog.GetInstance().Update(step2.ResponseData, 1, submitLog.Id);
-                            }
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
                         }
+
+                        //交易确认
+                        ActionLog step3 = new ActionLog
+                        {
+                            RequestId = submitLog.RequestId,
+                            Step = 3,
+                            ActionName = "TradeInWeb",
+                            RequestData = "",
+                            CreateTime = DateTime.Now
+                        };
+
+                        //确认分解交易
+                        try
+                        {
+                            cd.Trade_Web(out outXml);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteErrorLogInfo("TradeInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }
+
+                        LogHelper.WriteDealLogInfo("TradeInWeb返回结果：\r\n" + outXml);
+                        ShowMessage("TradeInWeb返回结果：\r\n" + outXml);
+
+                        step3.ResponseData = outXml;
+                        BActionLog.GetInstance().Insert(step3);
+
+                        ApiResultVO apiResult = new ApiResultVO
+                        {
+                            Success = "true",
+                            ErrorMessage = "",
+                            TradeNumber = refundResult.Output.Trade.TradeNumber,
+                            TotalAmount = refundResult.Output.SummaryPay.TotalAmount.ToString("#0.####"),
+                            InInsuranceAmount = refundResult.Output.SummaryPay.FundAmount.ToString("#0.####")
+                        };
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<![CDATA[");
+                        sb.Append(step2.ResponseData);
+                        sb.Append("]]>");
+                        apiResult.Result = Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+
+                        BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(apiResult), 1, submitLog.RequestId);
                     }
                     else
                     {
                         ActionLog step1 = new ActionLog
                         {
-                            SubmitId = submitLog.Id,
+                            RequestId = submitLog.RequestId,
                             Step = 1,
-                            ActionName = "GetTradeStateInWeb",
+                            ActionName = "CommitTradeStateInWeb",
                             RequestData = submitLog.SubmitContent,
                             CreateTime = DateTime.Now
                         };
 
-                        LogHelper.WriteDealLogInfo("GetTradeStateInWeb查询订单号：\r\n" + submitLog.SubmitContent);
-                        ShowMessage("GetTradeStateInWeb查询订单号：\r\n" + submitLog.SubmitContent);
+                        LogHelper.WriteDealLogInfo("CommitTradeStateInWeb查询订单号：\r\n" + submitLog.SubmitContent);
+                        ShowMessage("CommitTradeStateInWeb查询订单号：\r\n" + submitLog.SubmitContent);
 
-                        cd.CommitTradeState_Web(step1.RequestData, out string outXml);
+                        string outXml;
+
+                        try
+                        {
+                            cd.CommitTradeState_Web(step1.RequestData, out outXml);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.WriteErrorLogInfo("TradeInWeb请求", ex.ToString());
+                            ApiResultVO errorResult = new ApiResultVO();
+                            errorResult.Success = "false";
+                            errorResult.ErrorMessage = "首信医保接口无法访问";
+                            BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(errorResult), 2, submitLog.RequestId);
+                            return;
+                        }                      
 
                         LogHelper.WriteDealLogInfo("GetTradeStateInWeb返回结果：\r\n" + outXml);
-                        ShowMessage("GetTradeStateInWeb返回结果：\r\n" + outXml);
+                        ShowMessage("CommitTradeStateInWeb返回结果：\r\n" + outXml);
 
                         ComResultVO<TradeStateVO> tradeStateResult = BActionXml.GetInstance().GetTradeStateVO(outXml);
                         step1.ResponseData = JsonConvert.SerializeObject(tradeStateResult);
                         BActionLog.GetInstance().Insert(step1);
 
-                        BSubmitLog.GetInstance().Update(step1.ResponseData, 1, submitLog.Id);
+                        ApiResultVO apiResult = new ApiResultVO
+                        {
+                            Success = tradeStateResult.State.Success,
+                            ErrorMessage = !tradeStateResult.State.Success.Equals("true", StringComparison.OrdinalIgnoreCase) ? tradeStateResult.State.Error.Message : "",
+                            TradeNumber = submitLog.SubmitContent,
+                            TotalAmount = "",
+                            InInsuranceAmount = ""
+                        };
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<![CDATA[");
+                        sb.Append(step1.ResponseData);
+                        sb.Append("]]>");
+                        apiResult.Result = Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+
+                        BSubmitLog.GetInstance().Update(JsonConvert.SerializeObject(apiResult), 1, submitLog.RequestId);
                     }
                 }              
                 

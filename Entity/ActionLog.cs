@@ -15,7 +15,7 @@ namespace HC.Entity
         /// <summary>
         /// 提交的事务Id
         /// </summary>
-        public long SubmitId { get; set; }
+        public string RequestId { get; set; }
 
         /// <summary>
         /// 操作步骤。默认 1

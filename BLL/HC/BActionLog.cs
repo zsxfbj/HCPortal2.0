@@ -20,6 +20,5 @@ namespace HC.BLL.HC
         {
             dal.Insert(entity); 
         }
-
     }
 }
