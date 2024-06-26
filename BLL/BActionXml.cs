@@ -12,7 +12,15 @@ namespace HC.BLL
     /// </summary>
     public class BActionXml : Singleton<BActionXml>
     {
-        private const string XmlStart = "<?xml version=\"1.0\" encoding=\"UTF-16\" standalone=\"yes\"?>\r\n<root version=\"1.10.0004\">";
+        /// <summary>
+        /// XML文件开头
+        /// </summary>
+        private const string XmlStart = @"<?xml version=""1.0"" encoding=""UTF-16"" standalone=""yes""?>
+<root version=""1.10.0004"">";
+
+        /// <summary>
+        /// XML文件结尾
+        /// </summary>
         private const string XmlEnd = "</root>";
 
         #region public string GetPersonWebXml(PersonInfoReqDTO personInfo)
@@ -22,19 +30,19 @@ namespace HC.BLL
         /// <param name="personInfo"></param>
         /// <returns></returns>
         public string GetPersonWebXml(PersonInfoReqDTO personInfo)
-        {
+        {       
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(XmlStart);
-            sb.AppendLine("<input>");
-            sb.AppendLine("<card_no>" + personInfo.CardNumber + "</card_no>");
-            sb.AppendLine("<id_no>" + personInfo.IdNumber + "</id_no>");
-            sb.AppendLine("<personname>" + personInfo.PersonName + "</personname>");
+            sb.AppendLine("\t<input>");
+            sb.AppendLine("\t\t<card_no>" + personInfo.CardNumber + "</card_no>");
+            sb.AppendLine("\t\t<id_no>" + personInfo.IdNumber + "</id_no>");
+            sb.AppendLine("\t\t<personname>" + personInfo.PersonName + "</personname>");
             int.TryParse(personInfo.IdNumber.Substring(16,1), out int sex);
-            sb.AppendLine("<sex>" + ((sex%2 == 1) ? "1" : "2") + "</sex>");
-            sb.AppendLine("<birthday>" + personInfo.IdNumber.Substring(6,8) + "</birthday>");
-            sb.AppendLine("<fundtype>91</fundtype>");
-            sb.AppendLine("<hospflag>0</hospflag>");
-            sb.AppendLine("</input>");
+            sb.AppendLine("\t\t<sex>" + ((sex%2 == 1) ? "1" : "2") + "</sex>");
+            sb.AppendLine("\t\t<birthday>" + personInfo.IdNumber.Substring(6,8) + "</birthday>");
+            sb.AppendLine("\t\t<fundtype>91</fundtype>");
+            sb.AppendLine("\t\t<hospflag>0</hospflag>");
+            sb.AppendLine("\t</input>");
             sb.Append(XmlEnd);
             return sb.ToString();
         }
@@ -138,51 +146,51 @@ namespace HC.BLL
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(XmlStart);
-            sb.AppendLine("<input>");
+            sb.AppendLine("\t<input>");
 
             //交易信息
-            sb.AppendLine("<tradeinfo>");
-            sb.AppendLine("<curetype>17</curetype><illtype>0</illtype>");
-            sb.AppendLine("<feeno>" + req.FeeNumber + "</feeno>");
-            sb.AppendLine("<Histradeno>" + req.FeeNumber + "</Histradeno>");
-            sb.AppendLine("<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) + "</operator>");
-            sb.AppendLine("</tradeinfo>");
+            sb.AppendLine("\t\t<tradeinfo>");
+            sb.AppendLine("\t\t\t<curetype>17</curetype>");
+            sb.AppendLine("\t\t\t<illtype>0</illtype>");
+            sb.AppendLine("\t\t\t<feeno>" + req.FeeNumber + "</feeno>");            
+            sb.AppendLine("\t\t\t<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) + "</operator>");
+            sb.AppendLine("\t\t</tradeinfo>");
 
             //单据信息
-            sb.AppendLine("<recipearray>");
-            sb.AppendLine("<recipe>");
-            sb.AppendLine("<diagnoseno>1</diagnoseno>");
-            sb.AppendLine("<recipeno>1</recipeno>");
-            sb.AppendLine("<recipedate>" + req.RecipeDate + "</recipedate>");
-            sb.AppendLine("<diagnosecode></diagnosecode>");
-            sb.AppendLine("<diagnosename></diagnosename>");
-            sb.AppendLine("<medicalrecord></medicalrecord>");
-            sb.AppendLine("<sectioncode>" + req.SectionCode.Trim() + "</sectioncode>");
-            sb.AppendLine("<sectionname>" + req.SectionName.Trim() + "</sectionname>");
-            sb.AppendLine("<hissectionname></hissectionname>");
-            sb.AppendLine("<drid>" + (string.IsNullOrEmpty(req.DoctorId) ? "" : req.DoctorId.Trim()) + "</drid>");
-            sb.AppendLine("<drname>" + (string.IsNullOrEmpty(req.DoctorName) ? "" : req.DoctorName.Trim()) + "</drname>");
-            sb.AppendLine("<recipetype>" + req.RecipeType + "</recipetype>");
-            sb.AppendLine("<remark></remark>");
-            sb.AppendLine("<registertradeno></registertradeno>");
-            sb.AppendLine("<billstype>1</billstype>");
-            sb.AppendLine("<DoctorLevel>01</DoctorLevel>");
-            sb.AppendLine("</recipe>");
-            sb.AppendLine("</recipearray>");
+            sb.AppendLine("\t\t<recipearray>");
+            sb.AppendLine("\t\t\t<recipe>");
+            sb.AppendLine("\t\t\t\t<diagnoseno>1</diagnoseno>");
+            sb.AppendLine("\t\t\t\t<recipeno>1</recipeno>");
+            sb.AppendLine("\t\t\t\t<recipedate>" + (string.IsNullOrEmpty(req.RecipeDate) ? DateTime.Now.ToString("yyyyMMddHHmmss") : req.RecipeDate) + "</recipedate>");
+            sb.AppendLine("\t\t\t\t<diagnosecode></diagnosecode>");
+            sb.AppendLine("\t\t\t\t<diagnosename></diagnosename>");
+            sb.AppendLine("\t\t\t\t<medicalrecord></medicalrecord>");
+            sb.AppendLine("\t\t\t\t<sectioncode>" + req.SectionCode.Trim() + "</sectioncode>");
+            sb.AppendLine("\t\t\t\t<sectionname>" + req.SectionName.Trim() + "</sectionname>");
+            sb.AppendLine("\t\t\t\t<hissectionname></hissectionname>");
+            sb.AppendLine("\t\t\t\t<drid>" + (string.IsNullOrEmpty(req.DoctorId) ? "" : req.DoctorId.Trim()) + "</drid>");
+            sb.AppendLine("\t\t\t\t<drname>" + (string.IsNullOrEmpty(req.DoctorName) ? "" : req.DoctorName.Trim()) + "</drname>");
+            sb.AppendLine("\t\t\t\t<recipetype>" + req.RecipeType + "</recipetype>");
+            sb.AppendLine("\t\t\t\t<remark></remark>");
+            sb.AppendLine("\t\t\t\t<registertradeno></registertradeno>");
+            sb.AppendLine("\t\t\t\t<billstype>1</billstype>");
+            sb.AppendLine("\t\t\t\t<DoctorLevel>01</DoctorLevel>");
+            sb.AppendLine("\t\t\t</recipe>");
+            sb.AppendLine("\t\t</recipearray>");
 
             //费用清单
-            sb.AppendLine("<feeitemarray>");
-            sb.Append("<feeitem itemno=\"1\" recipeno=\"1\" hiscode=\"" + req.HisCode + "\" ");
+            sb.AppendLine("\t\t<feeitemarray>");
+            sb.Append("\t\t\t<feeitem itemno=\"1\" recipeno=\"1\" hiscode=\"" + req.HisCode + "\" ");
             sb.Append("itemname=\"" + req.ItemName.Trim());
             sb.Append("\" itemtype=\"1\" ");
             sb.Append("unitprice=\" " + req.Fee.ToString("#0.####") + " \" ");
             sb.Append("count=\"1\" ");
             sb.Append("fee=\"" + req.Fee.ToString("#0.####") + "\" ");
             sb.AppendLine("dose=\"\" specification=\"\" unit=\"\" howtouse=\"\" dosage=\"\" packaging=\"\" minpackage=\"\" conversion=\"\" days=\"\" babyflag=\"0\"></feeitem>");
-            sb.AppendLine("</feeitemarray>");
+            sb.AppendLine("\t\t</feeitemarray>");
 
             //输入结束标记
-            sb.AppendLine("</input>");
+            sb.AppendLine("\t</input>");
 
             sb.Append(XmlEnd);
             return sb.ToString();
@@ -315,16 +323,16 @@ namespace HC.BLL
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(XmlStart);
-            sb.AppendLine("<input>");
+            sb.AppendLine("\t<input>");
 
             //交易信息
-            sb.AppendLine("<tradeinfo>");
-            sb.AppendLine("<tradeno>" + req.TradeNumber + "</tradeno>");
-            sb.AppendLine("<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) + "</operator>");
-            sb.AppendLine("</tradeinfo>");
+            sb.AppendLine("\t\t<tradeinfo>");
+            sb.AppendLine("\t\t\t<tradeno>" + req.TradeNumber + "</tradeno>");
+            sb.AppendLine("\t\t\t<operator>" + (string.IsNullOrEmpty(req.Operator) ? "" : req.Operator.Trim()) + "</operator>");
+            sb.AppendLine("\t\t</tradeinfo>");
 
             //输入结束标记
-            sb.AppendLine("</input>");
+            sb.AppendLine("\t</input>");
 
             sb.Append(XmlEnd);
             return sb.ToString();
