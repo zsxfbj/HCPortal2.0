@@ -16,7 +16,7 @@ namespace HC.BLL
         /// XML文件开头
         /// </summary>
         private const string XmlStart = @"<?xml version=""1.0"" encoding=""UTF-16"" standalone=""yes""?>
-<root version=""1.10.0004"">";
+<root version=""1.10.0004"" sender=""BJDHHCSM00002.100007"">";
 
         /// <summary>
         /// XML文件结尾
@@ -359,54 +359,50 @@ namespace HC.BLL
             if (outputNode != null)
             {
                 comResult.Output = new RefundTradeResultVO();
-
-
-                XmlNode fullTradeNode = outputNode.SelectSingleNode("fulltrade");
-                if (fullTradeNode != null)
+                              
+                //交易信息
+                XmlNode tradeNode = outputNode.SelectSingleNode("tradeinfo");
+                if (tradeNode != null)
                 {
-                    //交易信息
-                    XmlNode tradeNode = outputNode.SelectSingleNode("tradeinfo");
-                    if (tradeNode != null)
-                    {
-                        comResult.Output.Trade = new RefundTradeVO();
-                        //交易流水号
-                        comResult.Output.Trade.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
+                    comResult.Output.Trade = new RefundTradeVO();
+                    //交易流水号
+                    comResult.Output.Trade.TradeNumber = GetSubNodeValue(tradeNode, "tradeno");
 
-                        //就诊方式
-                        comResult.Output.Trade.IllType = GetSubNodeValue(tradeNode, "illtype");
+                    //就诊方式
+                    comResult.Output.Trade.IllType = GetSubNodeValue(tradeNode, "illtype");
 
-                        //医保应用号
-                        comResult.Output.Trade.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
+                    //医保应用号
+                    comResult.Output.Trade.IcNumber = GetSubNodeValue(tradeNode, "ic_no");
 
-                        //交易流水号
-                        comResult.Output.Trade.CureType = GetSubNodeValue(tradeNode, "curetype");
+                    //交易流水号
+                    comResult.Output.Trade.CureType = GetSubNodeValue(tradeNode, "curetype");
 
-                        //交易日期
-                        comResult.Output.Trade.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
-                    }
-
-                    //费用明细
-                    XmlNode feeItemsNode = outputNode.SelectSingleNode("feeitemarray");
-                    if (feeItemsNode != null)
-                    {
-                        comResult.Output.FeeItems = new FeeItemsVO();
-                        comResult.Output.FeeItems.FeeItem = GetFeeItemVO(feeItemsNode.ChildNodes.Item(0));                         
-                    }
-
-                    //汇总支付信息
-                    XmlNode summaryPayNode = outputNode.SelectSingleNode("sumpay");
-                    if (summaryPayNode != null)
-                    {
-                        comResult.Output.SummaryPay = GetSummaryPay(summaryPayNode);
-                    }
-
-                    //支付信息
-                    XmlNode paymentNode = outputNode.SelectSingleNode("payinfo");
-                    if (paymentNode != null)
-                    {
-                        comResult.Output.Payment = GetPayment(paymentNode);
-                    }
+                    //交易日期
+                    comResult.Output.Trade.TradeDate = GetSubNodeValue(tradeNode, "tradedate");
                 }
+
+                //费用明细
+                XmlNode feeItemsNode = outputNode.SelectSingleNode("feeitemarray");
+                if (feeItemsNode != null)
+                {
+                    comResult.Output.FeeItems = new FeeItemsVO();
+                    comResult.Output.FeeItems.FeeItem = GetFeeItemVO(feeItemsNode.ChildNodes.Item(0));                         
+                }
+
+                //汇总支付信息
+                XmlNode summaryPayNode = outputNode.SelectSingleNode("sumpay");
+                if (summaryPayNode != null)
+                {
+                    comResult.Output.SummaryPay = GetSummaryPay(summaryPayNode);
+                }
+
+                //支付信息
+                XmlNode paymentNode = outputNode.SelectSingleNode("payinfo");
+                if (paymentNode != null)
+                {
+                    comResult.Output.Payment = GetPayment(paymentNode);
+                }
+                
             }
             return comResult;
         }

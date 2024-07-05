@@ -20,13 +20,14 @@ namespace HC.WinService
 
         public event ShowMessageEventHandler OnShowMessage;
 
+        private WebRegClass cd = null;
+
         protected void ShowMessage(String message)
         {
             if (OnShowMessage != null)
             {
                 OnShowMessage(message);
             }
-
         }
 
         #region Fields
@@ -45,6 +46,7 @@ namespace HC.WinService
         /// </summary>
         public void Stop()
         {
+            cd = null;
             _running = false;
         }
 
@@ -57,6 +59,10 @@ namespace HC.WinService
         /// </summary>
         public void Start()
         {
+            if(cd == null)
+            {
+               cd = new WebRegClass();
+            }
             _running = true;
             Thread thread = new Thread(Run);
             thread.IsBackground = true;
@@ -77,7 +83,7 @@ namespace HC.WinService
             while (_running)
             {
                 DoWork();
-                Thread.Sleep(new TimeSpan(0, 0, 0, 0, 500));
+                Thread.Sleep(new TimeSpan(0, 0, 0, 2));
             }
             LogHelper.WriteNotifyLogInfo("MainJobThread线程结束工作...");
         }
@@ -97,8 +103,7 @@ namespace HC.WinService
                 SubmitLog submitLog = BSubmitLog.GetInstance().GetSubmitLogByFlag(0);
                 if(submitLog != null)
                 {                      
-                    //开始拆分任务
-                    WebRegClass cd = new WebRegClass();
+                    //开始拆分任务                   
                     if(submitLog.SubmitType == 1)
                     {                    
                         DivideReqDTO req = JsonConvert.DeserializeObject<DivideReqDTO>(submitLog.SubmitContent);
