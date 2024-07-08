@@ -167,7 +167,7 @@ namespace HC.BLL
             sb.AppendLine("\t\t\t\t<medicalrecord></medicalrecord>");
             sb.AppendLine("\t\t\t\t<sectioncode>" + req.SectionCode.Trim() + "</sectioncode>");
             sb.AppendLine("\t\t\t\t<sectionname>" + req.SectionName.Trim() + "</sectionname>");
-            sb.AppendLine("\t\t\t\t<hissectionname></hissectionname>");
+            sb.AppendLine("\t\t\t\t<hissectionname>"+ req.HisSectionName.Trim() + "</hissectionname>");
             sb.AppendLine("\t\t\t\t<drid>" + (string.IsNullOrEmpty(req.DoctorId) ? "" : req.DoctorId.Trim()) + "</drid>");
             sb.AppendLine("\t\t\t\t<drname>" + (string.IsNullOrEmpty(req.DoctorName) ? "" : req.DoctorName.Trim()) + "</drname>");
             sb.AppendLine("\t\t\t\t<recipetype>" + req.RecipeType + "</recipetype>");
